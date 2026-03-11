@@ -12,7 +12,7 @@ export const Input = React.forwardRef<HTMLInputElement, React.InputHTMLAttribute
         <input
             ref={ref}
             className={cn(
-                "flex h-12 w-full brutal-border bg-white px-3 py-2 text-sm",
+                "flex h-9 w-full brutal-border bg-white px-2 py-1 text-xs",
                 "placeholder:text-gray-500 focus:outline-none focus:ring-0 brutal-shadow-sm transition-shadow",
                 "focus:brutal-shadow",
                 className
@@ -29,7 +29,7 @@ export const Button = React.forwardRef<HTMLButtonElement, React.ButtonHTMLAttrib
         <button
             ref={ref}
             className={cn(
-                "inline-flex items-center justify-center h-14 font-bold uppercase tracking-wider",
+                "inline-flex items-center justify-center h-10 text-sm font-bold uppercase tracking-wider",
                 "bg-[#FDE047] brutal-border brutal-shadow transition-all active:translate-x-[4px] active:translate-y-[4px] active:shadow-none",
                 "hover:bg-[#fde047]/90",
                 className
@@ -47,7 +47,7 @@ export const Select = React.forwardRef<HTMLSelectElement, React.SelectHTMLAttrib
             <select
                 ref={ref}
                 className={cn(
-                    "flex h-12 w-full appearance-none brutal-border bg-white px-3 py-2 text-sm font-semibold",
+                    "flex h-9 w-full appearance-none brutal-border bg-white px-2 py-1 text-xs font-semibold",
                     "focus:outline-none focus:ring-0 brutal-shadow-sm focus:brutal-shadow transition-shadow",
                     className
                 )}
@@ -55,8 +55,8 @@ export const Select = React.forwardRef<HTMLSelectElement, React.SelectHTMLAttrib
             >
                 {children}
             </select>
-            <div className="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none brutal-border border-y-0 border-r-0 border-l-2 bg-white">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none brutal-border border-y-0 border-r-0 border-l-2 bg-white">
+                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M19 9l-7 7-7-7" />
                 </svg>
             </div>
@@ -74,14 +74,14 @@ export const Switch = ({ checked, onChange }: { checked: boolean, onChange: (che
             aria-checked={checked}
             onClick={() => onChange(!checked)}
             className={cn(
-                "relative inline-flex h-7 w-12 shrink-0 cursor-pointer items-center brutal-border transition-colors",
+                "relative inline-flex h-5 w-9 shrink-0 cursor-pointer items-center brutal-border transition-colors",
                 checked ? "bg-black" : "bg-white"
             )}
         >
             <span
                 className={cn(
-                    "pointer-events-none inline-block h-5 w-5 transform bg-white brutal-border transition-transform",
-                    checked ? "translate-x-5" : "translate-x-0.5",
+                    "pointer-events-none inline-block h-3 w-3 transform bg-white brutal-border transition-transform",
+                    checked ? "translate-x-4" : "translate-x-0.5",
                     checked && "bg-white"
                 )}
             />

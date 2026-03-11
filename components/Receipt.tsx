@@ -47,76 +47,76 @@ export const Receipt = React.forwardRef<HTMLDivElement, ReceiptProps>(({
         <div
             ref={ref}
             className={cn(
-                "w-[400px] shrink-0 font-mono text-black relative flex flex-col items-center justify-start receipt-mask px-8 py-12 pb-16 bg-gradient-to-br from-[#c69a8a] to-[#e4b3a1]",
+                "w-[320px] shrink-0 font-mono text-black relative flex flex-col items-center justify-start receipt-mask px-6 py-10 pb-12 bg-gradient-to-br from-[#c69a8a] to-[#e4b3a1]",
                 // ticketStyle === "Thermal Paper" ? "thermal-paper font-mono" : ""
                 ticketStyle === "Thermal Paper" ? "thermal-paper" : "bg-white",
                 "drop-shadow-2xl"
             )}
         >
-            <div className="w-full flex flex-col items-center mb-6">
-                <h2 className="text-3xl font-bold tracking-widest mb-2 font-mono" style={{ fontFamily: 'var(--font-mono)' }}>CINEMA BILL</h2>
-                <p className="text-sm tracking-[0.2em] uppercase">{timePeriod}</p>
+            <div className="w-full flex flex-col items-center mb-5">
+                <h2 className="text-2xl font-bold tracking-widest mb-1.5 font-mono" style={{ fontFamily: 'var(--font-mono)' }}>CINEMA BILL</h2>
+                <p className="text-[10px] tracking-[0.2em] uppercase">{timePeriod}</p>
             </div>
 
-            <div className="w-full text-xs mb-6 uppercase">
+            <div className="w-full text-[10px] mb-5 uppercase leading-relaxed">
                 <p>ORDER #0001 FOR CINEPHILE 🎬</p>
                 <p>{dateStr.toUpperCase()}</p>
             </div>
 
-            <div className="w-full border-b border-black border-dashed pb-2 mb-4 flex justify-between text-xs font-bold uppercase">
+            <div className="w-full border-b border-black border-dashed pb-1.5 mb-3 flex justify-between text-[10px] font-bold uppercase">
                 <span>QTY ITEM / RATING</span>
                 <span>RUNTIME</span>
             </div>
 
-            <div className="w-full flex-col gap-4 flex mb-8">
+            <div className="w-full flex-col gap-3 flex mb-6">
                 {mockMovies.map((movie, index) => (
-                    <div key={movie.id} className="flex flex-col text-sm uppercase leading-tight">
+                    <div key={movie.id} className="flex flex-col text-xs uppercase leading-tight">
                         <div className="flex justify-between">
                             <span className="font-bold">0{index + 1} {movie.title}</span>
                             {showRuntimes && <span>{movie.duration}</span>}
                         </div>
-                        <div className="flex justify-between text-[11px] text-black/80">
+                        <div className="flex justify-between text-[10px] text-black/80">
                             <span>{movie.director}{showRatings ? ` · ${movie.rating}` : ""}</span>
                         </div>
                     </div>
                 ))}
             </div>
 
-            <div className="w-full flex justify-between text-sm mb-2">
+            <div className="w-full flex justify-between text-[11px] mb-1.5">
                 <span>ITEM COUNT:</span>
-                <span>5</span>
+                <span>{mockMovies.length}</span>
             </div>
 
-            <div className="w-full flex justify-between text-lg font-bold border-b border-black border-dashed pb-6 mb-4">
-                <span>TOTAL:</span>
-                <span>65:45</span>
+            <div className="w-full flex justify-between text-base font-bold border-b border-black border-dashed pb-4 mb-3">
+                <span>TOTAL RUNTIME:</span>
+                <span>10:33</span>
             </div>
 
-            <div className="w-full text-[10px] uppercase space-y-1 mb-8">
-                <p>CARD #: **** **** **** 2024</p>
+            <div className="w-full text-[9px] uppercase space-y-1 mb-6">
+                <p>CARD #: **** **** **** 2026</p>
                 <p>AUTH CODE: 123421</p>
                 <p>CARDHOLDER: {displayUser} 🎬</p>
             </div>
 
-            <div className="w-full flex flex-col items-center gap-4">
-                <p className="text-sm font-bold tracking-widest uppercase">THANK YOU FOR VISITING!</p>
+            <div className="w-full flex flex-col items-center gap-3">
+                <p className="text-[11px] font-bold tracking-widest uppercase">THANK YOU FOR VISITING!</p>
 
                 {codeStyle === "Barcode" ? (
-                    <div className="w-full h-16 flex justify-center items-center mt-2 mb-1 px-4 overflow-hidden">
+                    <div className="w-full h-12 flex justify-center items-center mt-1 mb-1 px-2 overflow-hidden">
                         {generateBarcode()}
                     </div>
                 ) : (
-                    <div className="w-24 h-24 border-4 border-black p-1 flex mt-2 mb-1">
+                    <div className="w-20 h-20 border-[3px] border-black p-1 flex mt-1 mb-1">
                         {/* Simple QR mockup */}
-                        <div className="w-full h-full bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cGF0aCBkPSJNMCAwaDQwdjQwSDB6TTIwIDIwaDIwaDIwSDB6IiBmaWxsPSJibGFjayIvPjwvc3ZnPg==')] bg-repeat shadow-[inset_0_0_0_4px_white]">
-                            <div className="w-full h-full border-4 border-white bg-black/20" style={{ backgroundSize: '10px 10px', backgroundImage: 'radial-gradient(black 40%, transparent 40%)' }} />
+                        <div className="w-full h-full bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cGF0aCBkPSJNMCAwaDQwdjQwSDB6TTIwIDIwaDIwaDIwSDB6IiBmaWxsPSJibGFjayIvPjwvc3ZnPg==')] bg-repeat shadow-[inset_0_0_0_3px_white]">
+                            <div className="w-full h-full border-[3px] border-white bg-black/20" style={{ backgroundSize: '10px 10px', backgroundImage: 'radial-gradient(black 40%, transparent 40%)' }} />
                         </div>
                     </div>
                 )}
 
-                <p className="text-[10px] tracking-widestlowercase">cinemabill.netlify.app</p>
+                <p className="text-[9px] tracking-widestlowercase">cinemabill.netlify.app</p>
 
-                <p className="text-xs font-bold tracking-widest mt-4">KEEP CINEMA ALIVE</p>
+                <p className="text-[10px] font-bold tracking-widest mt-2">KEEP CINEMA ALIVE</p>
             </div>
         </div>
     );

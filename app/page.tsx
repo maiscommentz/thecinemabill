@@ -86,15 +86,15 @@ export default function Home() {
         </AnimatePresence>
 
         {/* Action Buttons */}
-        <div className="absolute bottom-8 right-8 flex flex-col gap-4 z-20">
-          <button className="w-14 h-14 bg-white brutal-border brutal-shadow rounded-full flex items-center justify-center hover:bg-gray-50 active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all">
-            <Share2 className="w-5 h-5 stroke-[2.5]" />
+        <div className="absolute bottom-6 right-6 flex flex-col gap-3 z-20">
+          <button className="w-12 h-12 bg-white brutal-border brutal-shadow rounded-full flex items-center justify-center hover:bg-gray-50 active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all">
+            <Share2 className="w-4 h-4 stroke-[2.5]" />
           </button>
           <button
             onClick={handleDownload}
-            className="w-14 h-14 bg-black text-white brutal-border border-black brutal-shadow rounded-full flex items-center justify-center hover:bg-gray-900 active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all"
+            className="w-12 h-12 bg-black text-white brutal-border border-black brutal-shadow rounded-full flex items-center justify-center hover:bg-gray-900 active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all"
           >
-            <Download className="w-5 h-5 stroke-[2.5]" />
+            <Download className="w-4 h-4 stroke-[2.5]" />
           </button>
         </div>
       </div>

@@ -32,17 +32,17 @@ export function Sidebar({
     onGenerate
 }: SidebarProps) {
     return (
-        <div className="w-[350px] shrink-0 border-r-2 border-black bg-[#fcfcfc] p-8 flex flex-col h-[100dvh] overflow-y-auto z-10">
-            <div className="mb-12 cursor-default">
-                <h1 className="font-logo text-[3.5rem] font-black italic uppercase leading-none tracking-tight mb-2">
+        <div className="w-[320px] shrink-0 border-r-2 border-black bg-[#fcfcfc] p-6 flex flex-col h-[100dvh] overflow-y-auto z-10">
+            <div className="mb-8 cursor-default">
+                <h1 className="font-logo text-[2.5rem] font-black italic uppercase leading-none tracking-tight mb-2">
                     THE —<br />CINEMA BILL
                 </h1>
-                <p className="font-sans text-sm font-semibold text-gray-500">Your film history, itemized.</p>
+                <p className="font-sans text-xs font-semibold text-gray-500">Your film history, itemized as a receipt.</p>
             </div>
 
-            <div className="flex flex-col gap-6 flex-1">
-                <div className="flex flex-col gap-2">
-                    <label className="text-[10px] font-bold uppercase tracking-widest text-black">Letterboxd Username</label>
+            <div className="flex flex-col gap-4 flex-1">
+                <div className="flex flex-col gap-1.5">
+                    <label className="text-[9px] font-bold uppercase tracking-widest text-black">Letterboxd Username</label>
                     <Input
                         placeholder="e.g. film_lover12"
                         value={username}
@@ -50,12 +50,12 @@ export function Sidebar({
                     />
                 </div>
 
-                <Button className="w-full text-lg mt-2" onClick={onGenerate}>Generate Bill</Button>
+                <Button className="w-full text-sm mt-1" onClick={onGenerate}>Generate Bill</Button>
 
-                <hr className="border-t-2 border-black my-2" />
+                <hr className="border-t-2 border-black my-1" />
 
-                <div className="flex flex-col gap-2">
-                    <label className="text-[10px] font-bold uppercase tracking-widest text-black">List Type</label>
+                <div className="flex flex-col gap-1.5">
+                    <label className="text-[9px] font-bold uppercase tracking-widest text-black">List Type</label>
                     <Select value={listType} onChange={(e) => setListType(e.target.value)}>
                         <option>Recent Activity</option>
                         <option>Top 5 Favorites</option>
@@ -63,8 +63,8 @@ export function Sidebar({
                     </Select>
                 </div>
 
-                <div className="flex flex-col gap-2">
-                    <label className="text-[10px] font-bold uppercase tracking-widest text-black">Time Period</label>
+                <div className="flex flex-col gap-1.5">
+                    <label className="text-[9px] font-bold uppercase tracking-widest text-black">Time Period</label>
                     <Select value={timePeriod} onChange={(e) => setTimePeriod(e.target.value)}>
                         <option>Last Month</option>
                         <option>This Year</option>
@@ -72,8 +72,8 @@ export function Sidebar({
                     </Select>
                 </div>
 
-                <div className="flex flex-col gap-2">
-                    <label className="text-[10px] font-bold uppercase tracking-widest text-black">Ticket Style</label>
+                <div className="flex flex-col gap-1.5">
+                    <label className="text-[9px] font-bold uppercase tracking-widest text-black">Ticket Style</label>
                     <Select value={ticketStyle} onChange={(e) => setTicketStyle(e.target.value)}>
                         <option>Thermal Paper</option>
                         <option>Matte Black</option>
@@ -81,30 +81,30 @@ export function Sidebar({
                     </Select>
                 </div>
 
-                <div className="flex flex-col gap-2">
-                    <label className="text-[10px] font-bold uppercase tracking-widest text-black">Code Style</label>
+                <div className="flex flex-col gap-1.5">
+                    <label className="text-[9px] font-bold uppercase tracking-widest text-black">Code Style</label>
                     <Select value={codeStyle} onChange={(e) => setCodeStyle(e.target.value)}>
                         <option>Barcode</option>
                         <option>QR Code</option>
                     </Select>
                 </div>
 
-                <div className="flex items-center justify-between mt-2">
-                    <label className="text-[10px] font-bold uppercase tracking-widest text-black">Show Ratings</label>
+                <div className="flex items-center justify-between mt-1">
+                    <label className="text-[9px] font-bold uppercase tracking-widest text-black">Show Ratings</label>
                     <Switch checked={showRatings} onChange={setShowRatings} />
                 </div>
 
-                <div className="flex items-center justify-between mb-4">
-                    <label className="text-[10px] font-bold uppercase tracking-widest text-black">Show Runtimes</label>
+                <div className="flex items-center justify-between mb-2">
+                    <label className="text-[9px] font-bold uppercase tracking-widest text-black">Show Runtimes</label>
                     <Switch checked={showRuntimes} onChange={setShowRuntimes} />
                 </div>
             </div>
 
-            <div className="mt-8 pt-6 border-t border-gray-200">
-                <p className="font-sans text-[10px] text-gray-500 max-w-[200px] leading-relaxed mb-4">
-                    A minimalist utility for cinephiles. Converts your recent watches into a high-fidelity thermal receipt visualization.
+            <div className="pt-4 border-t border-gray-200 mt-auto">
+                <p className="font-sans text-[9px] text-gray-500 max-w-[200px] leading-relaxed mb-3">
+                    A minimalist utility for cinephiles. Converts your recent watches into a receipt visualization.
                 </p>
-                <p className="font-sans text-[9px] text-gray-400 font-bold tracking-wider">© 2026 MAISCOMMENTZ</p>
+                <p className="font-sans text-[8px] text-gray-400 font-bold tracking-wider">© 2026 MAISCOMMENTZ</p>
             </div>
         </div>
     );
