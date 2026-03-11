@@ -15,11 +15,11 @@ export interface ReceiptProps {
 }
 
 const mockMovies = [
-    { id: 1, title: "ANATOMY OF A FALL", director: "JUSTINE TRIET", duration: "2h 31m", rating: "4.5/5", time: "15:20" },
-    { id: 2, title: "POOR THINGS", director: "YORGOS LANTHIMOS", duration: "2h 21m", rating: "4.0/5", time: "14:10" },
-    { id: 3, title: "THE IRON CLAW", director: "SEAN DURKIN", duration: "2h 12m", rating: "4.0/5", time: "13:20" },
-    { id: 4, title: "PERFECT DAYS", director: "WIM WENDERS", duration: "2h 04m", rating: "4.5/5", time: "12:40" },
-    { id: 5, title: "PAST LIVES", director: "CELINE SONG", duration: "1h 45m", rating: "5.0/5", time: "10:55" },
+    { id: 1, title: "ANATOMY OF A FALL", director: "JUSTINE TRIET", duration: "2h 31m", rating: "4.5/5" },
+    { id: 2, title: "POOR THINGS", director: "YORGOS LANTHIMOS", duration: "2h 21m", rating: "4.0/5" },
+    { id: 3, title: "THE IRON CLAW", director: "SEAN DURKIN", duration: "2h 12m", rating: "4.0/5" },
+    { id: 4, title: "PERFECT DAYS", director: "WIM WENDERS", duration: "2h 04m", rating: "4.5/5" },
+    { id: 5, title: "PAST LIVES", director: "CELINE SONG", duration: "1h 45m", rating: "5.0/5" },
 ];
 
 export const Receipt = React.forwardRef<HTMLDivElement, ReceiptProps>(({
@@ -64,8 +64,8 @@ export const Receipt = React.forwardRef<HTMLDivElement, ReceiptProps>(({
             </div>
 
             <div className="w-full border-b border-black border-dashed pb-2 mb-4 flex justify-between text-xs font-bold uppercase">
-                <span>QTY ITEM / RUNTIME</span>
-                <span>RATE/TIME</span>
+                <span>QTY ITEM / RATING</span>
+                <span>RUNTIME</span>
             </div>
 
             <div className="w-full flex-col gap-4 flex mb-8">
@@ -73,11 +73,10 @@ export const Receipt = React.forwardRef<HTMLDivElement, ReceiptProps>(({
                     <div key={movie.id} className="flex flex-col text-sm uppercase leading-tight">
                         <div className="flex justify-between">
                             <span className="font-bold">0{index + 1} {movie.title}</span>
-                            {showRatings && <span>{movie.rating}</span>}
+                            {showRuntimes && <span>{movie.duration}</span>}
                         </div>
                         <div className="flex justify-between text-[11px] text-black/80">
-                            <span>{movie.director}{showRuntimes ? ` · ${movie.duration}` : ""}</span>
-                            <span>{movie.time}</span>
+                            <span>{movie.director}{showRatings ? ` · ${movie.rating}` : ""}</span>
                         </div>
                     </div>
                 ))}

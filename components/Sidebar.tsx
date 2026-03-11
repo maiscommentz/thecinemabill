@@ -58,8 +58,8 @@ export function Sidebar({
                     <label className="text-[10px] font-bold uppercase tracking-widest text-black">List Type</label>
                     <Select value={listType} onChange={(e) => setListType(e.target.value)}>
                         <option>Recent Activity</option>
-                        <option>Top 4 Favorites</option>
-                        <option>Watchlist</option>
+                        <option>Top 5 Favorites</option>
+                        <option>Top 10 Favorites</option>
                     </Select>
                 </div>
 
@@ -104,7 +104,7 @@ export function Sidebar({
                 <p className="font-sans text-[10px] text-gray-500 max-w-[200px] leading-relaxed mb-4">
                     A minimalist utility for cinephiles. Converts your recent watches into a high-fidelity thermal receipt visualization.
                 </p>
-                <p className="font-sans text-[9px] text-gray-400 font-bold tracking-wider">© 2026 NO-SIGNAL-STUDIO</p>
+                <p className="font-sans text-[9px] text-gray-400 font-bold tracking-wider">© 2026 MAISCOMMENTZ</p>
             </div>
         </div>
     );
