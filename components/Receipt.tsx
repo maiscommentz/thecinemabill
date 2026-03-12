@@ -3,6 +3,8 @@
 import React from "react";
 import { format } from "date-fns";
 import { cn } from "./ui";
+import { QRCodeSVG } from "qrcode.react";
+import JsBarcode from "jsbarcode";
 
 export interface ReceiptProps {
     username?: string;
@@ -58,14 +60,45 @@ export const Receipt = React.forwardRef<HTMLDivElement, ReceiptProps>(({
     const dateStr = format(new Date(), "EEEE, MMMM d, yyyy");
 
     const [currentUrl, setCurrentUrl] = React.useState("thecinemabill.maiscommentz.ch");
+    const [pageUrl, setPageUrl] = React.useState("");
     React.useEffect(() => {
         if (typeof window !== "undefined") {
             setCurrentUrl(window.location.host);
+            const params = new URLSearchParams({
+                ...(username ? { user: username } : {}),
+                list: listType,
+                period: timePeriod,
+                amount,
+                style: ticketStyle,
+                code: codeStyle,
+                ratings: showRatings ? "1" : "0",
+                genres: showGenres ? "1" : "0",
+            });
+            setPageUrl(`${window.location.origin}/?${params.toString()}`);
         }
-    }, []);
+    }, [username, listType, timePeriod, amount, ticketStyle, codeStyle, showRatings, showGenres]);
 
-    // A simple pure CSS barcode generator for visual effect
-    // We just generate a flex row of random width currentColor blocks
+    // Render barcode via JsBarcode
+    const barcodeRef = React.useRef<SVGSVGElement>(null);
+    React.useEffect(() => {
+        if (barcodeRef.current && pageUrl) {
+            try {
+                JsBarcode(barcodeRef.current, pageUrl, {
+                    format: "CODE128",
+                    displayValue: false,
+                    lineColor: "currentColor",
+                    background: "transparent",
+                    width: 0.7,
+                    height: 50,
+                    margin: 0,
+                });
+            } catch {
+                // URL may be too long for some barcode formats                
+            }
+        }
+    }, [pageUrl]);
+
+    // Fallback CSS bar pattern
     const generateBarcode = () => {
         return Array.from({ length: 45 }).map((_, i) => {
             const width = Math.floor(Math.random() * 4) + 1;
@@ -200,14 +233,22 @@ export const Receipt = React.forwardRef<HTMLDivElement, ReceiptProps>(({
                 <p className="uppercase mb-2">THANK YOU FOR YOUR ORDER!</p>
 
                 {codeStyle === "Barcode" ? (
-                    <div className="w-full max-w-[200px] h-14 flex justify-center items-center overflow-hidden mb-1">
-                        {generateBarcode()}
+                    <div className="w-full h-14 flex justify-center items-center overflow-hidden mb-1">
+                        {pageUrl ? (
+                            <svg ref={barcodeRef} className="w-full max-w-[240px] h-full" preserveAspectRatio="none" />
+                        ) : (
+                            generateBarcode()
+                        )}
                     </div>
                 ) : (
-                    <div className={cn("w-20 h-20 border-[3px] p-1 flex mt-1 mb-1", styleConfig.borderClass)}>
-                        <div className="w-full h-full bg-current" style={{ WebkitMaskImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M0 0h40v40H0zM20 20h20v20H0z" fill="white"/></svg>')`, WebkitMaskSize: 'cover' }}>
-                            <div className="w-full h-full border-[3px] border-current" style={{ backgroundSize: '10px 10px', backgroundImage: 'radial-gradient(currentColor 40%, transparent 40%)', opacity: 0.5 }} />
-                        </div>
+                    <div className={cn("flex mt-1 mb-1", styleConfig.borderClass)}>
+                        <QRCodeSVG
+                            value={pageUrl || currentUrl}
+                            size={100}
+                            bgColor="transparent"
+                            fgColor="currentColor"
+                            level="M"
+                        />
                     </div>
                 )}
 

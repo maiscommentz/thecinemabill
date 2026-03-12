@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { Sidebar } from "@/components/Sidebar";
 import { Receipt } from "@/components/Receipt";
 import { motion, AnimatePresence } from "framer-motion";
@@ -9,7 +9,7 @@ import { Download, Share2 } from "lucide-react";
 
 export default function Home() {
   const [username, setUsername] = useState("");
-  const [listType, setListType] = useState("Recent activity");
+  const [listType, setListType] = useState("Recent Activity");
   const [timePeriod, setTimePeriod] = useState("Last Month");
   const [amount, setAmount] = useState("5");
   const [ticketStyle, setTicketStyle] = useState("Classic Thermal");
@@ -19,6 +19,26 @@ export default function Home() {
 
   const [hasGenerated, setHasGenerated] = useState(false);
   const receiptRef = useRef<HTMLDivElement>(null);
+
+  // Read URL params on load and hydrate state
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const hasParams = params.toString().length > 0;
+
+    if (params.get("user")) setUsername(params.get("user")!);
+    if (params.get("list")) setListType(params.get("list")!);
+    if (params.get("period")) setTimePeriod(params.get("period")!);
+    if (params.get("amount")) setAmount(params.get("amount")!);
+    if (params.get("style")) setTicketStyle(params.get("style")!);
+    if (params.get("code")) setCodeStyle(params.get("code")!);
+    if (params.get("ratings")) setShowRatings(params.get("ratings") === "1");
+    if (params.get("genres")) setShowGenres(params.get("genres") === "1");
+
+    // Auto-generate receipt if params were present
+    if (hasParams) {
+      setTimeout(() => setHasGenerated(true), 200);
+    }
+  }, []);
 
   const handleGenerate = () => {
     // Reset generation state to trigger animation re-run
@@ -107,3 +127,4 @@ export default function Home() {
     </main>
   );
 }
+
