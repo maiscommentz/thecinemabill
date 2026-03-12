@@ -57,6 +57,7 @@ export const Receipt = React.forwardRef<HTMLDivElement, ReceiptProps>(({
     showGenres = true,
 }, ref) => {
     const displayUser = username || "CINEPHILE";
+    const truncatedUser = displayUser.length > 16 ? displayUser.slice(0, 16) + "..." : displayUser;
     const dateStr = format(new Date(), "EEEE, MMMM d, yyyy");
 
     const [currentUrl, setCurrentUrl] = React.useState("thecinemabill.maiscommentz.ch");
@@ -164,14 +165,14 @@ export const Receipt = React.forwardRef<HTMLDivElement, ReceiptProps>(({
             )}
 
             <div className="w-full flex flex-col items-center mb-6 z-10">
-                <h1 className="font-logo text-[2.2rem] font-black italic uppercase leading-none tracking-tight mb-2 text-center">
+                <h1 className="font-logo text-[2.2rem] font-black italic uppercase leading-none tracking-tight mb-2 text-left">
                     THE —<br />CINEMA BILL
                 </h1>
                 <p className="text-xs font-sans uppercase opacity-80" style={{ fontFamily: '"Courier New", Courier, monospace' }}>{listType} - {timePeriod}</p>
             </div>
 
             <div className="w-full flex flex-col items-start text-[13px] uppercase leading-relaxed z-10 mb-1" style={{ fontFamily: '"Courier New", Courier, monospace' }}>
-                <p>ORDER #0001 FOR {displayUser}</p>
+                <p>ORDER #0001 FOR {truncatedUser}</p>
                 <p>{dateStr.toUpperCase()}</p>
             </div>
 
@@ -226,7 +227,7 @@ export const Receipt = React.forwardRef<HTMLDivElement, ReceiptProps>(({
             <div className="w-full flex flex-col items-start text-[13px] uppercase z-10 mb-8" style={{ fontFamily: '"Courier New", Courier, monospace' }}>
                 <p>CARD #: **** **** **** 2026</p>
                 <p>AUTH CODE: 123421</p>
-                <p>CARDHOLDER: {displayUser}</p>
+                <p>CARDHOLDER: {truncatedUser}</p>
             </div>
 
             <div className="w-full flex flex-col items-center gap-2 z-10 text-[13px]" style={{ fontFamily: '"Courier New", Courier, monospace' }}>
