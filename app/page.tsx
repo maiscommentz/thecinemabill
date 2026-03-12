@@ -6,15 +6,20 @@ import { Receipt } from "@/components/Receipt";
 import { SplashScreen } from "@/components/SplashScreen";
 import { InfoModal } from "@/components/InfoModal";
 import { motion, AnimatePresence } from "framer-motion";
-import * as htmlToImage from "html-to-image";
 import { Download, Share2, Info, SlidersHorizontal, Check, X } from "lucide-react";
+import { useIsMobile } from "@/hooks/useIsMobile";
+import { parseUrlParams } from "@/lib/parseUrlParams";
+import { downloadStory } from "@/lib/downloadStory";
 
 export default function Home() {
+  // UI state
   const [showSplash, setShowSplash] = useState(true);
   const [showInfo, setShowInfo] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [hasGenerated, setHasGenerated] = useState(false);
   const [downloadState, setDownloadState] = useState<"idle" | "loading" | "done" | "error">("idle");
 
+  // Receipt options
   const [username, setUsername] = useState("");
   const [listType, setListType] = useState("Recent Activity");
   const [timePeriod, setTimePeriod] = useState("Last Month");
@@ -24,61 +29,25 @@ export default function Home() {
   const [showRatings, setShowRatings] = useState(true);
   const [showGenres, setShowGenres] = useState(true);
 
-  const [hasGenerated, setHasGenerated] = useState(false);
+  // Refs & hooks
   const receiptRef = useRef<HTMLDivElement>(null);
+  const isMobile = useIsMobile();
 
-  // Track viewport for responsive receipt scaling
-  const [isMobile, setIsMobile] = useState(false);
+  // Hydrate from validated URL params on mount
   useEffect(() => {
-    const update = () => setIsMobile(window.innerWidth < 768);
-    update();
-    window.addEventListener("resize", update);
-    return () => window.removeEventListener("resize", update);
+    const p = parseUrlParams(window.location.search);
+    if (p.username) setUsername(p.username);
+    if (p.listType) setListType(p.listType);
+    if (p.timePeriod) setTimePeriod(p.timePeriod);
+    if (p.amount) setAmount(p.amount);
+    if (p.ticketStyle) setTicketStyle(p.ticketStyle);
+    if (p.codeStyle) setCodeStyle(p.codeStyle);
+    if (p.showRatings !== undefined) setShowRatings(p.showRatings);
+    if (p.showGenres !== undefined) setShowGenres(p.showGenres);
+    if (p.hasAnyParam) setHasGenerated(true);
   }, []);
 
-  // Read URL params on load and hydrate state.
-  // Each option param is validated against its allowed values, invalid values are ignored.
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-
-    const LIST_TYPES = ["Recent Activity", "My Favourites"] as const;
-    const TIME_PERIODS = ["Last week", "Last Month", "Last Year", "All Time"] as const;
-    const STYLES = ["Classic Thermal", "Midnight OLED", "Eco-Kraft", "Premiere VIP"] as const;
-    const CODE_STYLES = ["Barcode", "QR Code"] as const;
-
-    const user = params.get("user");
-    if (user) setUsername(user.trim().slice(0, 50));
-
-    const list = params.get("list");
-    if (LIST_TYPES.includes(list as typeof LIST_TYPES[number])) setListType(list!);
-
-    const period = params.get("period");
-    if (TIME_PERIODS.includes(period as typeof TIME_PERIODS[number])) setTimePeriod(period!);
-
-    const amount = params.get("amount");
-    if (amount) {
-      const raw = parseInt(amount);
-      if (!isNaN(raw)) setAmount(String(Math.min(5, Math.max(1, raw))));
-    }
-
-    const style = params.get("style");
-    if (STYLES.includes(style as typeof STYLES[number])) setTicketStyle(style!);
-
-    const code = params.get("code");
-    if (CODE_STYLES.includes(code as typeof CODE_STYLES[number])) setCodeStyle(code!);
-
-    const ratings = params.get("ratings");
-    if (ratings === "1" || ratings === "0") setShowRatings(ratings === "1");
-
-    const genres = params.get("genres");
-    if (genres === "1" || genres === "0") setShowGenres(genres === "1");
-
-    // If any valid params were present, treat as "user already generated"
-    if (user || list || period || amount || style || code || ratings || genres) {
-      setHasGenerated(true);
-    }
-  }, []);
-
+  // Handlers
   const handleGenerate = () => {
     setHasGenerated(false);
     setTimeout(() => setHasGenerated(true), 100);
@@ -89,11 +58,10 @@ export default function Home() {
     if (!receiptRef.current || downloadState === "loading") return;
     setDownloadState("loading");
     try {
-      const dataUrl = await htmlToImage.toPng(receiptRef.current, { quality: 1, pixelRatio: 3 });
-      const link = document.createElement("a");
-      link.download = `cinema-bill-${username || "cinephile"}.png`;
-      link.href = dataUrl;
-      link.click();
+      await downloadStory(
+        receiptRef.current,
+        `cinema-bill-${username || "cinephile"}-story.png`
+      );
       setDownloadState("done");
     } catch (err) {
       console.error("Failed to download image", err);
@@ -103,13 +71,11 @@ export default function Home() {
     }
   };
 
+  // Derived values
   const numAmount = parseInt(amount) || 5;
-  const scaleAmount = (() => {
-    // Mobile: always full size and the receipt area is scrollable
-    if (isMobile) return 1;
-    // Desktop: start shrinking above 5 items
-    return numAmount <= 5 ? 1 : Math.max(0.4, 1 - (numAmount - 5) * 0.04);
-  })();
+  const scaleAmount = isMobile
+    ? 1
+    : numAmount <= 5 ? 1 : Math.max(0.4, 1 - (numAmount - 5) * 0.04);
 
   const sidebarProps = {
     username, setUsername,
@@ -123,6 +89,7 @@ export default function Home() {
     onGenerate: handleGenerate,
   };
 
+  // Render
   return (
     <>
       {showSplash && <SplashScreen onDone={() => setShowSplash(false)} />}
@@ -138,7 +105,7 @@ export default function Home() {
         {/* Receipt canvas */}
         <div className="flex-1 relative overflow-hidden flex flex-col" style={{ background: "#f5f0f0" }}>
 
-          {/* Color blobs */}
+          {/* Pastel blobs */}
           <div className="absolute inset-0 pointer-events-none overflow-hidden">
             <div className="absolute -top-32 -left-32 w-[500px] h-[500px] rounded-full opacity-50" style={{ background: "radial-gradient(circle, #ffd6d6 0%, transparent 70%)" }} />
             <div className="absolute -bottom-32 -right-32 w-[500px] h-[500px] rounded-full opacity-50" style={{ background: "radial-gradient(circle, #c8f0e0 0%, transparent 70%)" }} />
@@ -195,7 +162,7 @@ export default function Home() {
             </AnimatePresence>
           </div>
 
-          {/* Action Buttons */}
+          {/* Action buttons */}
           <div className="absolute bottom-6 right-4 md:right-6 flex flex-col gap-3 z-20">
             <button
               onClick={() => setShowInfo(true)}
@@ -221,7 +188,7 @@ export default function Home() {
                     ? "bg-red-500 text-white border-red-700"
                     : "bg-black text-white border-black active:translate-x-[2px] active:translate-y-[2px] active:shadow-none",
               ].join(" ")}
-              title={downloadState === "done" ? "Downloaded!" : downloadState === "error" ? "Failed" : "Download"}
+              title={downloadState === "done" ? "Downloaded!" : downloadState === "error" ? "Failed" : "Download story"}
             >
               {downloadState === "loading" && (
                 <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
