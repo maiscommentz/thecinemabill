@@ -42,6 +42,9 @@ export default function Home() {
     }
   };
 
+  const numAmount = parseInt(amount) || 5;
+  const scaleAmount = numAmount <= 5 ? 1 : Math.max(0.4, 1 - (numAmount - 5) * 0.03);
+
   return (
     <main className="flex h-screen w-full overflow-hidden bg-white">
       <Sidebar
@@ -67,9 +70,9 @@ export default function Home() {
         <AnimatePresence>
           {hasGenerated && (
             <motion.div
-              initial={{ y: "150%", opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: "150%", opacity: 0 }}
+              initial={{ y: "150%", opacity: 0, scale: scaleAmount }}
+              animate={{ y: 0, opacity: 1, scale: scaleAmount }}
+              exit={{ y: "150%", opacity: 0, scale: scaleAmount }}
               transition={{ type: "spring", damping: 20, stiffness: 100 }}
               className="relative z-10"
             >

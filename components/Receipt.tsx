@@ -57,7 +57,7 @@ export const Receipt = React.forwardRef<HTMLDivElement, ReceiptProps>(({
     const displayUser = username || "CINEPHILE";
     const dateStr = format(new Date(), "EEEE, MMMM d, yyyy");
 
-    const [currentUrl, setCurrentUrl] = React.useState("thecinemabill.com");
+    const [currentUrl, setCurrentUrl] = React.useState("thecinemabill.maiscommentz.ch");
     React.useEffect(() => {
         if (typeof window !== "undefined") {
             setCurrentUrl(window.location.host);
@@ -113,7 +113,7 @@ export const Receipt = React.forwardRef<HTMLDivElement, ReceiptProps>(({
         <div
             ref={ref}
             className={cn(
-                "w-[340px] shrink-0 font-bold relative flex flex-col items-center justify-start px-8 py-10 pb-12",
+                "w-[340px] shrink-0 font-bold relative flex flex-col items-center justify-start px-6 py-10 pb-12",
                 styleConfig.containerClass,
                 "shadow-[0_10px_40px_rgba(0,0,0,0.15)]"
             )}

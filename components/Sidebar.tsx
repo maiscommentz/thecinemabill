@@ -62,7 +62,7 @@ export function Sidebar({
                     <Input
                         type="number"
                         min="1"
-                        max="20"
+                        max="10"
                         value={amount}
                         onKeyDown={(e) => {
                             if (["Backspace", "Delete", "ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Tab"].includes(e.key)) return;
@@ -77,10 +77,10 @@ export function Sidebar({
                                 return;
                             }
                             const val = parseInt(e.target.value);
-                            if (!isNaN(val) && val >= 1 && val <= 20) {
+                            if (!isNaN(val) && val >= 1 && val <= 10) {
                                 setAmount(e.target.value);
-                            } else if (val > 20) {
-                                setAmount("20");
+                            } else if (val > 10) {
+                                setAmount("10");
                             }
                         }}
                         onBlur={(e) => {
