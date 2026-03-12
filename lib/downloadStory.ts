@@ -4,25 +4,21 @@ import * as htmlToImage from "html-to-image";
  * Captures `receiptEl` and composites it onto a 1080×1920 story canvas
  * (Instagram story ratio) with the app's pastel blob background.
  */
-export async function downloadStory(
-    receiptEl: HTMLElement,
-    filename: string
-): Promise<void> {
-    // Capture the receipt DOM node at 3× resolution
+async function buildStoryCanvas(receiptEl: HTMLElement): Promise<HTMLCanvasElement> {
     const receiptDataUrl = await htmlToImage.toPng(receiptEl, {
         quality: 1,
         pixelRatio: 3,
         skipFonts: true,
     });
 
-    // Create the story canvas (9:16)
+    // Create the canvas (9:16)
     const W = 1080, H = 1920;
     const canvas = document.createElement("canvas");
     canvas.width = W;
     canvas.height = H;
     const ctx = canvas.getContext("2d")!;
 
-    // Background
+    // Background fill
     ctx.fillStyle = "#f5f0f0";
     ctx.fillRect(0, 0, W, H);
 
@@ -64,9 +60,52 @@ export async function downloadStory(
     ctx.drawImage(img, dx, dy, dw, dh);
     ctx.shadowColor = "transparent";
 
-    // Trigger download
+    return canvas;
+}
+
+// Public API
+
+/** Renders the canvas and triggers a browser file download. */
+export async function downloadStory(receiptEl: HTMLElement, filename: string): Promise<void> {
+    const canvas = await buildStoryCanvas(receiptEl);
     const link = document.createElement("a");
     link.download = filename;
     link.href = canvas.toDataURL("image/png");
     link.click();
+}
+
+/**
+ * Renders the canvas and opens the native OS share sheet (Web Share API).
+ * On desktop or unsupported browsers, falls back to copying the page URL.
+ *
+ * @returns `"shared"` | `"copied"` | `"unsupported"` so the caller can show feedback.
+ */
+export async function shareStory(
+    receiptEl: HTMLElement,
+    filename: string
+): Promise<"shared" | "copied" | "unsupported"> {
+    const canvas = await buildStoryCanvas(receiptEl);
+
+    // Try Web Share API with file (works on Android / iOS Safari)
+    const blob: Blob = await new Promise((res, rej) =>
+        canvas.toBlob((b) => (b ? res(b) : rej(new Error("toBlob failed"))), "image/png")
+    );
+    const file = new File([blob], filename, { type: "image/png" });
+
+    if (navigator.canShare?.({ files: [file] })) {
+        await navigator.share({
+            files: [file],
+            title: "The Cinema Bill",
+            text: "My movie receipt 🎬",
+        });
+        return "shared";
+    }
+
+    // Fallback for unsupported devices or browsers
+    try {
+        await navigator.clipboard.writeText(window.location.href);
+        return "copied";
+    } catch {
+        return "unsupported";
+    }
 }

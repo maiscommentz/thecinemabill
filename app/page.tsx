@@ -9,7 +9,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Download, Share2, Info, SlidersHorizontal, Check, X } from "lucide-react";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { parseUrlParams } from "@/lib/parseUrlParams";
-import { downloadStory } from "@/lib/downloadStory";
+import { downloadStory, shareStory } from "@/lib/downloadStory";
 
 export default function Home() {
   // UI state
@@ -18,6 +18,7 @@ export default function Home() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [hasGenerated, setHasGenerated] = useState(false);
   const [downloadState, setDownloadState] = useState<"idle" | "loading" | "done" | "error">("idle");
+  const [shareState, setShareState] = useState<"idle" | "loading" | "shared" | "copied" | "error">("idle");
 
   // Receipt options
   const [username, setUsername] = useState("");
@@ -68,6 +69,24 @@ export default function Home() {
       setDownloadState("error");
     } finally {
       setTimeout(() => setDownloadState("idle"), 2000);
+    }
+  };
+
+  const handleShare = async () => {
+    if (!receiptRef.current || shareState === "loading") return;
+    setShareState("loading");
+    try {
+      const result = await shareStory(
+        receiptRef.current,
+        `cinema-bill-${username || "cinephile"}-story.png`
+      );
+      setShareState(result === "shared" ? "shared" : result === "copied" ? "copied" : "error");
+    } catch (err) {
+      // User cancelled share sheet
+      const isCancelled = err instanceof Error && err.name === "AbortError";
+      setShareState(isCancelled ? "idle" : "error");
+    } finally {
+      setTimeout(() => setShareState("idle"), 2500);
     }
   };
 
@@ -172,10 +191,32 @@ export default function Home() {
               <Info className="w-4 h-4 stroke-[2.5]" />
             </button>
             <button
-              className="w-12 h-12 bg-white brutal-border brutal-shadow rounded-full flex items-center justify-center hover:bg-gray-50 active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all"
-              title="Share"
+              onClick={handleShare}
+              disabled={!hasGenerated || shareState === "loading"}
+              className={[
+                "w-12 h-12 brutal-border brutal-shadow rounded-full flex items-center justify-center transition-all",
+                shareState === "shared" || shareState === "copied"
+                  ? "bg-green-500 text-white border-green-700"
+                  : shareState === "error"
+                    ? "bg-red-500 text-white border-red-700"
+                    : "bg-white border-black active:translate-x-[2px] active:translate-y-[2px] active:shadow-none",
+              ].join(" ")}
+              title={
+                shareState === "shared" ? "Shared!" :
+                  shareState === "copied" ? "Link copied!" :
+                    shareState === "error" ? "Share failed" :
+                      "Copy to clipboard or share"
+              }
             >
-              <Share2 className="w-4 h-4 stroke-[2.5]" />
+              {shareState === "loading" && (
+                <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2.5" />
+                  <path className="opacity-90" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                </svg>
+              )}
+              {(shareState === "shared" || shareState === "copied") && <Check className="w-4 h-4 stroke-[2.5]" />}
+              {shareState === "error" && <X className="w-4 h-4 stroke-[2.5]" />}
+              {shareState === "idle" && <Share2 className="w-4 h-4 stroke-[2.5]" />}
             </button>
             <button
               onClick={handleDownload}
@@ -188,7 +229,7 @@ export default function Home() {
                     ? "bg-red-500 text-white border-red-700"
                     : "bg-black text-white border-black active:translate-x-[2px] active:translate-y-[2px] active:shadow-none",
               ].join(" ")}
-              title={downloadState === "done" ? "Downloaded!" : downloadState === "error" ? "Failed" : "Download story"}
+              title={downloadState === "done" ? "Downloaded!" : downloadState === "error" ? "Failed" : "Download as image"}
             >
               {downloadState === "loading" && (
                 <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
