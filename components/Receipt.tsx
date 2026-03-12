@@ -197,7 +197,7 @@ export const Receipt = React.forwardRef<HTMLDivElement, ReceiptProps>(({
             <Divider />
 
             <div className="w-full flex flex-col z-10 text-[13px] mt-1 mb-1" style={{ fontFamily: '"Courier New", Courier, monospace' }}>
-                {mockMovies.slice(0, parseInt(amount)).map((movie, index) => {
+                {mockMovies.slice(0, parseInt(amount) || 0).map((movie, index) => {
                     const subtitle = [
                         showGenres && movie.genres,
                         showRatings && movie.rating
@@ -224,7 +224,7 @@ export const Receipt = React.forwardRef<HTMLDivElement, ReceiptProps>(({
 
             <div className="w-full flex justify-between text-[13px] uppercase z-10 mt-1 mb-1" style={{ fontFamily: '"Courier New", Courier, monospace' }}>
                 <span>ITEM COUNT:</span>
-                <span>{Math.min(mockMovies.length, parseInt(amount))}</span>
+                <span>{Math.min(mockMovies.length, parseInt(amount) || 0)}</span>
             </div>
 
             <div className="w-full flex justify-between text-[13px] uppercase z-10 mb-6" style={{ fontFamily: '"Courier New", Courier, monospace' }}>
