@@ -46,6 +46,16 @@ const Divider = () => (
     </div>
 );
 
+// djb2-style hash stable 4-digit order number (1000–9999)
+function deriveOrderNumber(seed: string): string {
+    let h = 5381;
+    for (let i = 0; i < seed.length; i++) {
+        h = ((h << 5) + h) ^ seed.charCodeAt(i);
+        h = h & 0xffffffff;
+    }
+    return String(1000 + (Math.abs(h) % 9000));
+}
+
 export const Receipt = React.forwardRef<HTMLDivElement, ReceiptProps>(({
     username,
     listType = "Recent activity",
@@ -59,6 +69,8 @@ export const Receipt = React.forwardRef<HTMLDivElement, ReceiptProps>(({
     const displayUser = username || "CINEPHILE";
     const truncatedUser = displayUser.length > 16 ? displayUser.slice(0, 16) + "..." : displayUser;
     const dateStr = format(new Date(), "EEEE, MMMM d, yyyy");
+    const orderNumber = deriveOrderNumber(`${displayUser}|${listType}|${timePeriod}`);
+    const authCode = deriveOrderNumber(`${timePeriod}|${displayUser}|auth`).padEnd(6, "0").slice(0, 6);
 
     const [currentUrl, setCurrentUrl] = React.useState("thecinemabill.maiscommentz.ch");
     const [pageUrl, setPageUrl] = React.useState("");
@@ -180,7 +192,7 @@ export const Receipt = React.forwardRef<HTMLDivElement, ReceiptProps>(({
             </div>
 
             <div className="w-full flex flex-col items-start text-[13px] uppercase leading-relaxed z-10 mb-1" style={{ fontFamily: '"Courier New", Courier, monospace' }}>
-                <p>ORDER #0001 FOR {truncatedUser}</p>
+                <p>ORDER #{orderNumber} FOR {truncatedUser}</p>
                 <p>{dateStr.toUpperCase()}</p>
             </div>
 
@@ -234,7 +246,7 @@ export const Receipt = React.forwardRef<HTMLDivElement, ReceiptProps>(({
 
             <div className="w-full flex flex-col items-start text-[13px] uppercase z-10 mb-8" style={{ fontFamily: '"Courier New", Courier, monospace' }}>
                 <p>CARD #: **** **** **** 2026</p>
-                <p>AUTH CODE: 123421</p>
+                <p>AUTH CODE: {authCode}</p>
                 <p>CARDHOLDER: {truncatedUser}</p>
             </div>
 
