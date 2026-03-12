@@ -1,4 +1,5 @@
-// Allowed values for each option — kept in sync with the Sidebar selects.
+// Allowed values for each option
+// Kept in sync with the Sidebar selects.
 export const LIST_TYPES = ["Recent Activity", "My Favourites"] as const;
 export const TIME_PERIODS = ["Last week", "Last Month", "Last Year", "All Time"] as const;
 export const STYLES = ["Classic Thermal", "Midnight OLED", "Eco-Kraft", "Premiere VIP"] as const;
