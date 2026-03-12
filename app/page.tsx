@@ -7,12 +7,13 @@ import { SplashScreen } from "@/components/SplashScreen";
 import { InfoModal } from "@/components/InfoModal";
 import { motion, AnimatePresence } from "framer-motion";
 import * as htmlToImage from "html-to-image";
-import { Download, Share2, Info, SlidersHorizontal } from "lucide-react";
+import { Download, Share2, Info, SlidersHorizontal, Check, X } from "lucide-react";
 
 export default function Home() {
   const [showSplash, setShowSplash] = useState(true);
   const [showInfo, setShowInfo] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [downloadState, setDownloadState] = useState<"idle" | "loading" | "done" | "error">("idle");
 
   const [username, setUsername] = useState("");
   const [listType, setListType] = useState("Recent Activity");
@@ -85,16 +86,20 @@ export default function Home() {
   };
 
   const handleDownload = async () => {
-    if (receiptRef.current) {
-      try {
-        const dataUrl = await htmlToImage.toPng(receiptRef.current, { quality: 1, pixelRatio: 3 });
-        const link = document.createElement("a");
-        link.download = `cinema-bill-${username || "cinephile"}.png`;
-        link.href = dataUrl;
-        link.click();
-      } catch (err) {
-        console.error("Failed to download image", err);
-      }
+    if (!receiptRef.current || downloadState === "loading") return;
+    setDownloadState("loading");
+    try {
+      const dataUrl = await htmlToImage.toPng(receiptRef.current, { quality: 1, pixelRatio: 3 });
+      const link = document.createElement("a");
+      link.download = `cinema-bill-${username || "cinephile"}.png`;
+      link.href = dataUrl;
+      link.click();
+      setDownloadState("done");
+    } catch (err) {
+      console.error("Failed to download image", err);
+      setDownloadState("error");
+    } finally {
+      setTimeout(() => setDownloadState("idle"), 2000);
     }
   };
 
@@ -207,10 +212,26 @@ export default function Home() {
             </button>
             <button
               onClick={handleDownload}
-              className="w-12 h-12 bg-black text-white brutal-border border-black brutal-shadow rounded-full flex items-center justify-center active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all"
-              title="Download"
+              disabled={!hasGenerated || downloadState === "loading"}
+              className={[
+                "w-12 h-12 brutal-border brutal-shadow rounded-full flex items-center justify-center transition-all",
+                downloadState === "done"
+                  ? "bg-green-500 text-white border-green-700"
+                  : downloadState === "error"
+                    ? "bg-red-500 text-white border-red-700"
+                    : "bg-black text-white border-black active:translate-x-[2px] active:translate-y-[2px] active:shadow-none",
+              ].join(" ")}
+              title={downloadState === "done" ? "Downloaded!" : downloadState === "error" ? "Failed" : "Download"}
             >
-              <Download className="w-4 h-4 stroke-[2.5]" />
+              {downloadState === "loading" && (
+                <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2.5" />
+                  <path className="opacity-90" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                </svg>
+              )}
+              {downloadState === "done" && <Check className="w-4 h-4 stroke-[2.5]" />}
+              {downloadState === "error" && <X className="w-4 h-4 stroke-[2.5]" />}
+              {downloadState === "idle" && <Download className="w-4 h-4 stroke-[2.5]" />}
             </button>
           </div>
         </div>
