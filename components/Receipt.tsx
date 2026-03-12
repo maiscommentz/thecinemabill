@@ -20,6 +20,7 @@ export interface ReceiptProps {
 }
 
 const MONO: React.CSSProperties = { fontFamily: '"Courier New", Courier, monospace' };
+const FALLBACK_BARS: number[] = Array.from({ length: 45 }, () => Math.floor(Math.random() * 4) + 1);
 
 const Divider = () => (
     <div className="w-full overflow-hidden whitespace-nowrap font-mono tracking-widest text-[10px] z-10 select-none" style={MONO}>
@@ -186,8 +187,8 @@ export const Receipt = React.forwardRef<HTMLDivElement, ReceiptProps>((
                     <div className="w-full h-14 flex justify-center items-center overflow-hidden mb-1">
                         {pageUrl
                             ? <svg ref={barcodeRef} className="w-full max-w-[240px] h-full" preserveAspectRatio="none" />
-                            : <div className="flex h-full">{Array.from({ length: 45 }).map((_, i) => (
-                                <div key={i} className="bg-current h-full opacity-90" style={{ width: `${Math.floor(Math.random() * 4) + 1}px`, marginRight: "2px" }} />
+                            : <div className="flex h-full">{FALLBACK_BARS.map((w, i) => (
+                                <div key={i} className="bg-current h-full opacity-90" style={{ width: `${w}px`, marginRight: "2px" }} />
                             ))}</div>
                         }
                     </div>
