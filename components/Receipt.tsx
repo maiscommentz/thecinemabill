@@ -111,14 +111,14 @@ export const Receipt = React.forwardRef<HTMLDivElement, ReceiptProps>(({
                 <p className="text-xs font-sans uppercase opacity-80">{timePeriod}</p>
             </div>
 
-            <div className="w-full flex flex-col items-start text-[11px] uppercase leading-relaxed z-10 mb-1" style={{ fontFamily: '"Courier New", Courier, monospace' }}>
+            <div className="w-full flex flex-col items-start text-[13px] uppercase leading-relaxed z-10 mb-1" style={{ fontFamily: '"Courier New", Courier, monospace' }}>
                 <p>ORDER #0001 FOR {displayUser} 🎬</p>
                 <p>{dateStr.toUpperCase()}</p>
             </div>
 
             <Divider />
 
-            <div className="w-full flex justify-between text-[11px] uppercase z-10 mb-1" style={{ fontFamily: '"Courier New", Courier, monospace' }}>
+            <div className="w-full flex justify-between text-[13px] uppercase z-10 mb-1" style={{ fontFamily: '"Courier New", Courier, monospace' }}>
                 <div className="flex w-full">
                     <span className="w-8 shrink-0 text-left">QTY</span>
                     <span className="flex-1 text-left">ITEM</span>
@@ -128,7 +128,7 @@ export const Receipt = React.forwardRef<HTMLDivElement, ReceiptProps>(({
 
             <Divider />
 
-            <div className="w-full flex flex-col z-10 text-[11px] mt-1 mb-4" style={{ fontFamily: '"Courier New", Courier, monospace' }}>
+            <div className="w-full flex flex-col z-10 text-[13px] mt-1 mb-4" style={{ fontFamily: '"Courier New", Courier, monospace' }}>
                 {mockMovies.map((movie, index) => {
                     const subtitle = [
                         showGenres && movie.genres,
@@ -154,23 +154,23 @@ export const Receipt = React.forwardRef<HTMLDivElement, ReceiptProps>(({
 
             <Divider />
 
-            <div className="w-full flex justify-between text-[11px] uppercase z-10 mt-1 mb-1" style={{ fontFamily: '"Courier New", Courier, monospace' }}>
+            <div className="w-full flex justify-between text-[13px] uppercase z-10 mt-1 mb-1" style={{ fontFamily: '"Courier New", Courier, monospace' }}>
                 <span>ITEM COUNT:</span>
                 <span>{mockMovies.length}</span>
             </div>
 
-            <div className="w-full flex justify-between text-[11px] uppercase z-10 mb-6" style={{ fontFamily: '"Courier New", Courier, monospace' }}>
+            <div className="w-full flex justify-between text-[13px] uppercase z-10 mb-6" style={{ fontFamily: '"Courier New", Courier, monospace' }}>
                 <span>TOTAL:</span>
                 <span>10:33</span>
             </div>
 
-            <div className="w-full flex flex-col items-start text-[11px] uppercase z-10 mb-8" style={{ fontFamily: '"Courier New", Courier, monospace' }}>
+            <div className="w-full flex flex-col items-start text-[13px] uppercase z-10 mb-8" style={{ fontFamily: '"Courier New", Courier, monospace' }}>
                 <p>CARD #: **** **** **** 2026</p>
                 <p>AUTH CODE: 123421</p>
                 <p>CARDHOLDER: {displayUser} 🎬</p>
             </div>
 
-            <div className="w-full flex flex-col items-center gap-2 z-10 text-[11px]" style={{ fontFamily: '"Courier New", Courier, monospace' }}>
+            <div className="w-full flex flex-col items-center gap-2 z-10 text-[13px]" style={{ fontFamily: '"Courier New", Courier, monospace' }}>
                 <p className="uppercase mb-2">THANK YOU FOR VISITING!</p>
 
                 {codeStyle === "Barcode" ? (
@@ -185,7 +185,7 @@ export const Receipt = React.forwardRef<HTMLDivElement, ReceiptProps>(({
                     </div>
                 )}
 
-                <p className="text-[11px] lowercase opacity-80">cinemabill.netlify.app</p>
+                <p className="text-[13px] lowercase opacity-80">cinemabill.netlify.app</p>
             </div>
         </div>
     );
