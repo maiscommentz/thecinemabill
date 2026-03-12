@@ -83,11 +83,15 @@ export const Receipt = React.forwardRef<HTMLDivElement, ReceiptProps>(({
     const barcodeRef = React.useRef<SVGSVGElement>(null);
     React.useEffect(() => {
         if (barcodeRef.current && pageUrl) {
+            const fgColor = ticketStyle === "Midnight OLED" ? "#00FF41"
+                : ticketStyle === "Eco-Kraft" ? "#3e2723"
+                    : ticketStyle === "Premiere VIP" ? "#0a192f"
+                        : "#1A1A1A";
             try {
                 JsBarcode(barcodeRef.current, pageUrl, {
                     format: "CODE128",
                     displayValue: false,
-                    lineColor: "currentColor",
+                    lineColor: fgColor,
                     background: "transparent",
                     width: 0.7,
                     height: 50,
@@ -97,7 +101,7 @@ export const Receipt = React.forwardRef<HTMLDivElement, ReceiptProps>(({
                 // URL may be too long for some barcode formats                
             }
         }
-    }, [pageUrl]);
+    }, [pageUrl, ticketStyle]);
 
     // Fallback CSS bar pattern
     const generateBarcode = () => {
@@ -113,6 +117,7 @@ export const Receipt = React.forwardRef<HTMLDivElement, ReceiptProps>(({
                 return {
                     containerClass: "bg-[#121212] text-[#00FF41]",
                     borderClass: "border-current opacity-80",
+                    fgColor: "#00FF41",
                     logoIcon: "",
                     style: { textShadow: "0 0 5px rgba(0,255,65,0.4)" }
                 };
@@ -120,6 +125,7 @@ export const Receipt = React.forwardRef<HTMLDivElement, ReceiptProps>(({
                 return {
                     containerClass: "bg-[#D2B48C] text-[#3e2723] kraft-paper",
                     borderClass: "border-current opacity-70",
+                    fgColor: "#3e2723",
                     logoIcon: "",
                     style: {}
                 };
@@ -127,6 +133,7 @@ export const Receipt = React.forwardRef<HTMLDivElement, ReceiptProps>(({
                 return {
                     containerClass: "bg-gradient-to-br from-[#F1E5AC] to-[#d4af37] text-[#0a192f] shadow-[inset_0_0_0_4px_rgba(212,175,55,0.5)]",
                     borderClass: "border-[#0a192f] opacity-80",
+                    fgColor: "#0a192f",
                     logoIcon: "🍿",
                     style: {}
                 };
@@ -134,7 +141,8 @@ export const Receipt = React.forwardRef<HTMLDivElement, ReceiptProps>(({
             default:
                 return {
                     containerClass: "bg-[#F9F9F9] text-[#1A1A1A] thermal-paper",
-                    borderClass: "border-current opacity-50",
+                    borderClass: "border-[#1A1A1A] border-opacity-50",
+                    fgColor: "#1A1A1A",
                     logoIcon: "",
                     style: {}
                 };
@@ -247,7 +255,7 @@ export const Receipt = React.forwardRef<HTMLDivElement, ReceiptProps>(({
                             value={pageUrl || currentUrl}
                             size={100}
                             bgColor="transparent"
-                            fgColor="currentColor"
+                            fgColor={styleConfig.fgColor || "#000000"}
                             level="M"
                         />
                     </div>
