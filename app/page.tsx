@@ -4,12 +4,14 @@ import React, { useRef, useState, useEffect } from "react";
 import { Sidebar } from "@/components/Sidebar";
 import { Receipt } from "@/components/Receipt";
 import { SplashScreen } from "@/components/SplashScreen";
+import { InfoModal } from "@/components/InfoModal";
 import { motion, AnimatePresence } from "framer-motion";
 import * as htmlToImage from "html-to-image";
-import { Download, Share2 } from "lucide-react";
+import { Download, Share2, Info } from "lucide-react";
 
 export default function Home() {
   const [showSplash, setShowSplash] = useState(true);
+  const [showInfo, setShowInfo] = useState(false);
   const [username, setUsername] = useState("");
   const [listType, setListType] = useState("Recent Activity");
   const [timePeriod, setTimePeriod] = useState("Last Month");
@@ -73,6 +75,7 @@ export default function Home() {
   return (
     <>
       {showSplash && <SplashScreen onDone={() => setShowSplash(false)} />}
+      <InfoModal isOpen={showInfo} onClose={() => setShowInfo(false)} />
       <main className="flex h-screen w-full overflow-hidden bg-white">
         <Sidebar
           username={username} setUsername={setUsername}
@@ -128,12 +131,22 @@ export default function Home() {
 
           {/* Action Buttons */}
           <div className="absolute bottom-6 right-6 flex flex-col gap-3 z-20">
-            <button className="w-12 h-12 bg-white brutal-border brutal-shadow rounded-full flex items-center justify-center hover:bg-gray-50 active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all">
+            <button
+              onClick={() => setShowInfo(true)}
+              className="w-12 h-12 bg-white brutal-border brutal-shadow rounded-full flex items-center justify-center hover:bg-gray-50 active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all"
+              title="About"
+            >
+              <Info className="w-4 h-4 stroke-[2.5]" />
+            </button>
+            <button
+              className="w-12 h-12 bg-white brutal-border brutal-shadow rounded-full flex items-center justify-center hover:bg-gray-50 active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all"
+              title="Share"
+            >
               <Share2 className="w-4 h-4 stroke-[2.5]" />
             </button>
             <button
               onClick={handleDownload}
-              className="w-12 h-12 bg-black text-white brutal-border border-black brutal-shadow rounded-full flex items-center justify-center hover:bg-gray-900 active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all"
+              className="w-12 h-12 bg-black text-white brutal-border border-black brutal-shadow rounded-full flex items-center justify-center active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all"
             >
               <Download className="w-4 h-4 stroke-[2.5]" />
             </button>

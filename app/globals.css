@@ -6,6 +6,17 @@
   --font-mono: var(--font-vt323);
 }
 
+@layer base {
+
+  button,
+  select,
+  a,
+  label[for],
+  [role="button"] {
+    cursor: pointer;
+  }
+}
+
 @layer utilities {
   .brutal-border {
     @apply border-2 border-black;
