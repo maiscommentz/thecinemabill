@@ -77,9 +77,8 @@ export function Sidebar({
                     <Select value={ticketStyle} onChange={(e) => setTicketStyle(e.target.value)}>
                         <option>Classic Thermal</option>
                         <option>Midnight OLED</option>
-                        <option>Vintage Archive</option>
                         <option>Eco-Kraft</option>
-                        <option>Premiere Gold</option>
+                        <option>Premiere VIP</option>
                     </Select>
                 </div>
 
