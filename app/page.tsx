@@ -30,7 +30,10 @@ export default function Home() {
     if (params.get("user")) setUsername(params.get("user")!);
     if (params.get("list")) setListType(params.get("list")!);
     if (params.get("period")) setTimePeriod(params.get("period")!);
-    if (params.get("amount")) setAmount(params.get("amount")!);
+    if (params.get("amount")) {
+      const raw = parseInt(params.get("amount")!);
+      if (!isNaN(raw)) setAmount(String(Math.min(10, Math.max(1, raw))));
+    }
     if (params.get("style")) setTicketStyle(params.get("style")!);
     if (params.get("code")) setCodeStyle(params.get("code")!);
     if (params.get("ratings")) setShowRatings(params.get("ratings") === "1");

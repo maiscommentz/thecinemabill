@@ -41,7 +41,7 @@ const mockMovies = [
 ];
 
 const Divider = () => (
-    <div className="w-full overflow-hidden whitespace-nowrap opacity-60 font-mono tracking-widest text-[10px] z-10 mb-1 mt-1 select-none" style={{ fontFamily: '"Courier New", Courier, monospace' }}>
+    <div className="w-full overflow-hidden whitespace-nowrap font-mono tracking-widest text-[10px] z-10 select-none" style={{ fontFamily: '"Courier New", Courier, monospace' }}>
         ----------------------------------------------------------------------------------------------------
     </div>
 );
@@ -186,7 +186,7 @@ export const Receipt = React.forwardRef<HTMLDivElement, ReceiptProps>(({
 
             <Divider />
 
-            <div className="w-full flex justify-between text-[13px] uppercase z-10 mb-1" style={{ fontFamily: '"Courier New", Courier, monospace' }}>
+            <div className="w-full flex justify-between text-[13px] uppercase z-10" style={{ fontFamily: '"Courier New", Courier, monospace' }}>
                 <div className="flex w-full">
                     <span className="w-8 shrink-0 text-left">QTY</span>
                     <span className="flex-1 text-left">ITEM</span>
@@ -196,7 +196,7 @@ export const Receipt = React.forwardRef<HTMLDivElement, ReceiptProps>(({
 
             <Divider />
 
-            <div className="w-full flex flex-col z-10 text-[13px] mt-1 mb-4" style={{ fontFamily: '"Courier New", Courier, monospace' }}>
+            <div className="w-full flex flex-col z-10 text-[13px] mt-1 mb-1" style={{ fontFamily: '"Courier New", Courier, monospace' }}>
                 {mockMovies.slice(0, parseInt(amount)).map((movie, index) => {
                     const subtitle = [
                         showGenres && movie.genres,
