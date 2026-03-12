@@ -10,6 +10,8 @@ export interface SidebarProps {
     setListType: (val: string) => void;
     timePeriod: string;
     setTimePeriod: (val: string) => void;
+    amount: string;
+    setAmount: (val: string) => void;
     ticketStyle: string;
     setTicketStyle: (val: string) => void;
     codeStyle: string;
@@ -25,6 +27,7 @@ export function Sidebar({
     username, setUsername,
     listType, setListType,
     timePeriod, setTimePeriod,
+    amount, setAmount,
     ticketStyle, setTicketStyle,
     codeStyle, setCodeStyle,
     showRatings, setShowRatings,
@@ -55,19 +58,53 @@ export function Sidebar({
                 <hr className="border-t-2 border-black my-1" />
 
                 <div className="flex flex-col gap-1.5">
+                    <label className="text-[9px] font-bold uppercase tracking-widest text-black">Amount</label>
+                    <Input
+                        type="number"
+                        min="1"
+                        max="20"
+                        value={amount}
+                        onKeyDown={(e) => {
+                            if (["Backspace", "Delete", "ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Tab"].includes(e.key)) return;
+                            if (e.ctrlKey || e.metaKey) return;
+                            if (!/^[0-9]$/.test(e.key)) {
+                                e.preventDefault();
+                            }
+                        }}
+                        onChange={(e) => {
+                            if (e.target.value === "") {
+                                setAmount("");
+                                return;
+                            }
+                            const val = parseInt(e.target.value);
+                            if (!isNaN(val) && val >= 1 && val <= 20) {
+                                setAmount(e.target.value);
+                            } else if (val > 20) {
+                                setAmount("20");
+                            }
+                        }}
+                        onBlur={(e) => {
+                            if (e.target.value === "" || parseInt(e.target.value) < 1) {
+                                setAmount("1");
+                            }
+                        }}
+                    />
+                </div>
+
+                <div className="flex flex-col gap-1.5">
                     <label className="text-[9px] font-bold uppercase tracking-widest text-black">List Type</label>
                     <Select value={listType} onChange={(e) => setListType(e.target.value)}>
                         <option>Recent Activity</option>
-                        <option>Top 5 Favorites</option>
-                        <option>Top 10 Favorites</option>
+                        <option>My Favourites</option>
                     </Select>
                 </div>
 
                 <div className="flex flex-col gap-1.5">
                     <label className="text-[9px] font-bold uppercase tracking-widest text-black">Time Period</label>
                     <Select value={timePeriod} onChange={(e) => setTimePeriod(e.target.value)}>
+                        <option>Last week</option>
                         <option>Last Month</option>
-                        <option>This Year</option>
+                        <option>Last Year</option>
                         <option>All Time</option>
                     </Select>
                 </div>

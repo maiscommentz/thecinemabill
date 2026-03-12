@@ -8,6 +8,7 @@ export interface ReceiptProps {
     username?: string;
     listType?: string;
     timePeriod?: string;
+    amount?: string;
     ticketStyle?: string;
     codeStyle?: string;
     showRatings?: boolean;
@@ -20,6 +21,21 @@ const mockMovies = [
     { id: 3, title: "THE IRON CLAW", genres: "DRAMA, SPORT", duration: "02:12", rating: "4.0/5.0" },
     { id: 4, title: "PERFECT DAYS", genres: "DRAMA", duration: "02:04", rating: "4.5/5.0" },
     { id: 5, title: "PAST LIVES", genres: "ROMANCE, DRAMA", duration: "01:45", rating: "5.0/5.0" },
+    { id: 6, title: "OPPENHEIMER", genres: "BIOGRAPHY, DRAMA", duration: "03:00", rating: "4.5/5.0" },
+    { id: 7, title: "KILLERS OF THE FLOWER MOON", genres: "CRIME, DRAMA", duration: "03:26", rating: "4.0/5.0" },
+    { id: 8, title: "SOCIETY OF THE SNOW", genres: "SURVIVAL, THRILLER", duration: "02:24", rating: "4.5/5.0" },
+    { id: 9, title: "SALTBURN", genres: "THRILLER, COMEDY", duration: "02:11", rating: "3.5/5.0" },
+    { id: 10, title: "BARBIE", genres: "COMEDY, FANTASY", duration: "01:54", rating: "4.0/5.0" },
+    { id: 11, title: "DUNE: PART TWO", genres: "SCIFI, ACTION", duration: "02:46", rating: "4.5/5.0" },
+    { id: 12, title: "THE BOY AND THE HERON", genres: "ANIMATION, FANTASY", duration: "02:04", rating: "4.0/5.0" },
+    { id: 13, title: "SPIDER-MAN: ACROSS THE SPIDER-VERSE", genres: "ANIMATION, ACTION", duration: "02:20", rating: "4.5/5.0" },
+    { id: 14, title: "GODZILLA MINUS ONE", genres: "ACTION, SCIFI", duration: "02:05", rating: "4.0/5.0" },
+    { id: 15, title: "ASTEROID CITY", genres: "COMEDY, ROMANCE", duration: "01:45", rating: "3.5/5.0" },
+    { id: 16, title: "THE HOLDOVERS", genres: "COMEDY, DRAMA", duration: "02:13", rating: "4.0/5.0" },
+    { id: 17, title: "MAY DECEMBER", genres: "COMEDY, DRAMA", duration: "01:57", rating: "3.5/5.0" },
+    { id: 18, title: "AMERICAN FICTION", genres: "COMEDY, DRAMA", duration: "01:57", rating: "4.0/5.0" },
+    { id: 19, title: "PRISCILLA", genres: "BIOGRAPHY, DRAMA", duration: "01:53", rating: "3.5/5.0" },
+    { id: 20, title: "THE ZONE OF INTEREST", genres: "DRAMA, WAR", duration: "01:45", rating: "4.5/5.0" },
 ];
 
 const Divider = () => (
@@ -30,8 +46,9 @@ const Divider = () => (
 
 export const Receipt = React.forwardRef<HTMLDivElement, ReceiptProps>(({
     username,
-    listType = "Recent Activity",
+    listType = "Recent activity",
     timePeriod = "Last Month",
+    amount = "5",
     ticketStyle = "Thermal Paper",
     codeStyle = "Barcode",
     showRatings = true,
@@ -39,6 +56,13 @@ export const Receipt = React.forwardRef<HTMLDivElement, ReceiptProps>(({
 }, ref) => {
     const displayUser = username || "CINEPHILE";
     const dateStr = format(new Date(), "EEEE, MMMM d, yyyy");
+
+    const [currentUrl, setCurrentUrl] = React.useState("thecinemabill.com");
+    React.useEffect(() => {
+        if (typeof window !== "undefined") {
+            setCurrentUrl(window.location.host);
+        }
+    }, []);
 
     // A simple pure CSS barcode generator for visual effect
     // We just generate a flex row of random width currentColor blocks
@@ -89,7 +113,7 @@ export const Receipt = React.forwardRef<HTMLDivElement, ReceiptProps>(({
         <div
             ref={ref}
             className={cn(
-                "w-[340px] shrink-0 relative flex flex-col items-center justify-start px-8 py-10 pb-12",
+                "w-[340px] shrink-0 font-bold relative flex flex-col items-center justify-start px-8 py-10 pb-12",
                 styleConfig.containerClass,
                 "shadow-[0_10px_40px_rgba(0,0,0,0.15)]"
             )}
@@ -107,12 +131,14 @@ export const Receipt = React.forwardRef<HTMLDivElement, ReceiptProps>(({
             )}
 
             <div className="w-full flex flex-col items-center mb-6 z-10">
-                <h2 className="text-3xl font-bold tracking-tighter mb-1 font-sans uppercase">CINEMA BILL</h2>
-                <p className="text-xs font-sans uppercase opacity-80">{timePeriod}</p>
+                <h1 className="font-logo text-[2.2rem] font-black italic uppercase leading-none tracking-tight mb-2 text-center">
+                    THE —<br />CINEMA BILL
+                </h1>
+                <p className="text-xs font-sans uppercase opacity-80" style={{ fontFamily: '"Courier New", Courier, monospace' }}>{listType} - {timePeriod}</p>
             </div>
 
             <div className="w-full flex flex-col items-start text-[13px] uppercase leading-relaxed z-10 mb-1" style={{ fontFamily: '"Courier New", Courier, monospace' }}>
-                <p>ORDER #0001 FOR {displayUser} 🎬</p>
+                <p>ORDER #0001 FOR {displayUser}</p>
                 <p>{dateStr.toUpperCase()}</p>
             </div>
 
@@ -129,7 +155,7 @@ export const Receipt = React.forwardRef<HTMLDivElement, ReceiptProps>(({
             <Divider />
 
             <div className="w-full flex flex-col z-10 text-[13px] mt-1 mb-4" style={{ fontFamily: '"Courier New", Courier, monospace' }}>
-                {mockMovies.map((movie, index) => {
+                {mockMovies.slice(0, parseInt(amount)).map((movie, index) => {
                     const subtitle = [
                         showGenres && movie.genres,
                         showRatings && movie.rating
@@ -156,7 +182,7 @@ export const Receipt = React.forwardRef<HTMLDivElement, ReceiptProps>(({
 
             <div className="w-full flex justify-between text-[13px] uppercase z-10 mt-1 mb-1" style={{ fontFamily: '"Courier New", Courier, monospace' }}>
                 <span>ITEM COUNT:</span>
-                <span>{mockMovies.length}</span>
+                <span>{Math.min(mockMovies.length, parseInt(amount))}</span>
             </div>
 
             <div className="w-full flex justify-between text-[13px] uppercase z-10 mb-6" style={{ fontFamily: '"Courier New", Courier, monospace' }}>
@@ -167,11 +193,11 @@ export const Receipt = React.forwardRef<HTMLDivElement, ReceiptProps>(({
             <div className="w-full flex flex-col items-start text-[13px] uppercase z-10 mb-8" style={{ fontFamily: '"Courier New", Courier, monospace' }}>
                 <p>CARD #: **** **** **** 2026</p>
                 <p>AUTH CODE: 123421</p>
-                <p>CARDHOLDER: {displayUser} 🎬</p>
+                <p>CARDHOLDER: {displayUser}</p>
             </div>
 
             <div className="w-full flex flex-col items-center gap-2 z-10 text-[13px]" style={{ fontFamily: '"Courier New", Courier, monospace' }}>
-                <p className="uppercase mb-2">THANK YOU FOR VISITING!</p>
+                <p className="uppercase mb-2">THANK YOU FOR YOUR ORDER!</p>
 
                 {codeStyle === "Barcode" ? (
                     <div className="w-full max-w-[200px] h-14 flex justify-center items-center overflow-hidden mb-1">
@@ -185,7 +211,7 @@ export const Receipt = React.forwardRef<HTMLDivElement, ReceiptProps>(({
                     </div>
                 )}
 
-                <p className="text-[13px] lowercase opacity-80">cinemabill.netlify.app</p>
+                <p className="text-[13px] lowercase opacity-80">{currentUrl}</p>
             </div>
         </div>
     );

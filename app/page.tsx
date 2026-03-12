@@ -9,8 +9,9 @@ import { Download, Share2 } from "lucide-react";
 
 export default function Home() {
   const [username, setUsername] = useState("");
-  const [listType, setListType] = useState("Recent Activity");
+  const [listType, setListType] = useState("Recent activity");
   const [timePeriod, setTimePeriod] = useState("Last Month");
+  const [amount, setAmount] = useState("5");
   const [ticketStyle, setTicketStyle] = useState("Classic Thermal");
   const [codeStyle, setCodeStyle] = useState("Barcode");
   const [showRatings, setShowRatings] = useState(true);
@@ -47,6 +48,7 @@ export default function Home() {
         username={username} setUsername={setUsername}
         listType={listType} setListType={setListType}
         timePeriod={timePeriod} setTimePeriod={setTimePeriod}
+        amount={amount} setAmount={setAmount}
         ticketStyle={ticketStyle} setTicketStyle={setTicketStyle}
         codeStyle={codeStyle} setCodeStyle={setCodeStyle}
         showRatings={showRatings} setShowRatings={setShowRatings}
@@ -76,6 +78,7 @@ export default function Home() {
                 username={username}
                 listType={listType}
                 timePeriod={timePeriod}
+                amount={amount}
                 ticketStyle={ticketStyle}
                 codeStyle={codeStyle}
                 showRatings={showRatings}
