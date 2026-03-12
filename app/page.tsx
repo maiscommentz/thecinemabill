@@ -35,25 +35,46 @@ export default function Home() {
     return () => window.removeEventListener("resize", update);
   }, []);
 
-  // Read URL params on load and hydrate state
+  // Read URL params on load and hydrate state.
+  // Each option param is validated against its allowed values, invalid values are ignored.
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const hasParams = params.toString().length > 0;
 
-    if (params.get("user")) setUsername(params.get("user")!);
-    if (params.get("list")) setListType(params.get("list")!);
-    if (params.get("period")) setTimePeriod(params.get("period")!);
-    if (params.get("amount")) {
-      const raw = parseInt(params.get("amount")!);
-      if (!isNaN(raw)) setAmount(String(Math.min(10, Math.max(1, raw))));
+    const LIST_TYPES = ["Recent Activity", "My Favourites"] as const;
+    const TIME_PERIODS = ["Last week", "Last Month", "Last Year", "All Time"] as const;
+    const STYLES = ["Classic Thermal", "Midnight OLED", "Eco-Kraft", "Premiere VIP"] as const;
+    const CODE_STYLES = ["Barcode", "QR Code"] as const;
+
+    const user = params.get("user");
+    if (user) setUsername(user.trim().slice(0, 50));
+
+    const list = params.get("list");
+    if (LIST_TYPES.includes(list as typeof LIST_TYPES[number])) setListType(list!);
+
+    const period = params.get("period");
+    if (TIME_PERIODS.includes(period as typeof TIME_PERIODS[number])) setTimePeriod(period!);
+
+    const amount = params.get("amount");
+    if (amount) {
+      const raw = parseInt(amount);
+      if (!isNaN(raw)) setAmount(String(Math.min(5, Math.max(1, raw))));
     }
-    if (params.get("style")) setTicketStyle(params.get("style")!);
-    if (params.get("code")) setCodeStyle(params.get("code")!);
-    if (params.get("ratings")) setShowRatings(params.get("ratings") === "1");
-    if (params.get("genres")) setShowGenres(params.get("genres") === "1");
 
-    if (hasParams) {
-      setTimeout(() => setHasGenerated(true), 200);
+    const style = params.get("style");
+    if (STYLES.includes(style as typeof STYLES[number])) setTicketStyle(style!);
+
+    const code = params.get("code");
+    if (CODE_STYLES.includes(code as typeof CODE_STYLES[number])) setCodeStyle(code!);
+
+    const ratings = params.get("ratings");
+    if (ratings === "1" || ratings === "0") setShowRatings(ratings === "1");
+
+    const genres = params.get("genres");
+    if (genres === "1" || genres === "0") setShowGenres(genres === "1");
+
+    // If any valid params were present, treat as "user already generated"
+    if (user || list || period || amount || style || code || ratings || genres) {
+      setHasGenerated(true);
     }
   }, []);
 
