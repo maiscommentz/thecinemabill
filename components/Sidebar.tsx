@@ -3,6 +3,7 @@
 import React from "react";
 import { Input, Button, Select, Switch } from "./ui";
 
+
 export interface SidebarProps {
     username: string;
     setUsername: (val: string) => void;
@@ -32,11 +33,12 @@ export function Sidebar({
     codeStyle, setCodeStyle,
     showRatings, setShowRatings,
     showGenres, setShowGenres,
-    onGenerate
+    onGenerate,
 }: SidebarProps) {
     return (
-        <div className="w-[320px] shrink-0 border-r-2 border-black bg-[#fcfcfc] p-6 flex flex-col h-[100dvh] overflow-y-auto z-10">
-            <div className="mb-8 cursor-default">
+        <div className="w-full md:w-[320px] shrink-0 md:border-r-2 md:border-black bg-[#fcfcfc] p-6 flex flex-col h-full overflow-y-auto z-10">
+            {/* Desktop-only title block */}
+            <div className="hidden md:block mb-8 cursor-default">
                 <h1 className="font-logo text-[2.5rem] font-black italic uppercase leading-none tracking-tight mb-2">
                     THE —<br />CINEMA BILL
                 </h1>

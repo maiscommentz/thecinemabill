@@ -41,7 +41,7 @@ export function SplashScreen({ onDone }: { onDone: () => void }) {
                         className="relative z-10 flex flex-col items-center gap-4"
                     >
                         <h1
-                            className="font-logo text-[4.5rem] font-black italic uppercase leading-none tracking-tight text-left select-none"
+                            className="font-logo text-[2.8rem] sm:text-[4.5rem] font-black italic uppercase leading-none tracking-tight text-left select-none"
                             style={{ fontFamily: "inherit" }}
                         >
                             THE —<br />CINEMA BILL
