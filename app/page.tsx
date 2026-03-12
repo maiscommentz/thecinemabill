@@ -63,7 +63,7 @@ export default function Home() {
   };
 
   const numAmount = parseInt(amount) || 5;
-  const scaleAmount = numAmount <= 5 ? 1 : Math.max(0.4, 1 - (numAmount - 5) * 0.03);
+  const scaleAmount = numAmount <= 5 ? 1 : Math.max(0.4, 1 - (numAmount - 5) * 0.04);
 
   return (
     <main className="flex h-screen w-full overflow-hidden bg-white">
@@ -79,7 +79,15 @@ export default function Home() {
         onGenerate={handleGenerate}
       />
 
-      <div className="flex-1 relative overflow-hidden flex items-center justify-center p-8 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-[#fff7ed] via-[#fef2f2] to-[#eff6ff]">
+      <div className="flex-1 relative overflow-hidden flex items-center justify-center p-8" style={{ background: "#f5f0f0" }}>
+        {/* Soft color blobs */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          <div className="absolute -top-32 -left-32 w-[500px] h-[500px] rounded-full opacity-50" style={{ background: "radial-gradient(circle, #ffd6d6 0%, transparent 70%)" }} />
+          <div className="absolute -bottom-32 -right-32 w-[500px] h-[500px] rounded-full opacity-50" style={{ background: "radial-gradient(circle, #c8f0e0 0%, transparent 70%)" }} />
+          <div className="absolute top-1/2 -right-20 w-[500px] h-[500px] rounded-full opacity-60" style={{ background: "radial-gradient(circle, #d4e8ff 0%, transparent 70%)" }} />
+          <div className="absolute bottom-0 left-1/4 w-[450px] h-[450px] rounded-full opacity-55" style={{ background: "radial-gradient(circle, #e8d4ff 0%, transparent 70%)" }} />
+          <div className="absolute top-0 right-1/3 w-[420px] h-[420px] rounded-full opacity-55" style={{ background: "radial-gradient(circle, #ffecd2 0%, transparent 70%)" }} />
+        </div>
 
         {!hasGenerated && (
           <div className="text-gray-400 font-mono text-sm tracking-widest uppercase">
