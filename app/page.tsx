@@ -11,10 +11,10 @@ export default function Home() {
   const [username, setUsername] = useState("");
   const [listType, setListType] = useState("Recent Activity");
   const [timePeriod, setTimePeriod] = useState("Last Month");
-  const [ticketStyle, setTicketStyle] = useState("Thermal Paper");
+  const [ticketStyle, setTicketStyle] = useState("Classic Thermal");
   const [codeStyle, setCodeStyle] = useState("Barcode");
   const [showRatings, setShowRatings] = useState(true);
-  const [showRuntimes, setShowRuntimes] = useState(true);
+  const [showGenres, setShowGenres] = useState(true);
 
   const [hasGenerated, setHasGenerated] = useState(false);
   const receiptRef = useRef<HTMLDivElement>(null);
@@ -50,7 +50,7 @@ export default function Home() {
         ticketStyle={ticketStyle} setTicketStyle={setTicketStyle}
         codeStyle={codeStyle} setCodeStyle={setCodeStyle}
         showRatings={showRatings} setShowRatings={setShowRatings}
-        showRuntimes={showRuntimes} setShowRuntimes={setShowRuntimes}
+        showGenres={showGenres} setShowGenres={setShowGenres}
         onGenerate={handleGenerate}
       />
 
@@ -79,7 +79,7 @@ export default function Home() {
                 ticketStyle={ticketStyle}
                 codeStyle={codeStyle}
                 showRatings={showRatings}
-                showRuntimes={showRuntimes}
+                showGenres={showGenres}
               />
             </motion.div>
           )}

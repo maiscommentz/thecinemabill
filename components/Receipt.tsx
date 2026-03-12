@@ -11,15 +11,15 @@ export interface ReceiptProps {
     ticketStyle?: string;
     codeStyle?: string;
     showRatings?: boolean;
-    showRuntimes?: boolean;
+    showGenres?: boolean;
 }
 
 const mockMovies = [
-    { id: 1, title: "ANATOMY OF A FALL", director: "JUSTINE TRIET", duration: "2h 31m", rating: "4.5/5" },
-    { id: 2, title: "POOR THINGS", director: "YORGOS LANTHIMOS", duration: "2h 21m", rating: "4.0/5" },
-    { id: 3, title: "THE IRON CLAW", director: "SEAN DURKIN", duration: "2h 12m", rating: "4.0/5" },
-    { id: 4, title: "PERFECT DAYS", director: "WIM WENDERS", duration: "2h 04m", rating: "4.5/5" },
-    { id: 5, title: "PAST LIVES", director: "CELINE SONG", duration: "1h 45m", rating: "5.0/5" },
+    { id: 1, title: "ANATOMY OF A FALL", genres: "THRILLER, DRAMA", duration: "02:31", rating: "4.5/5" },
+    { id: 2, title: "POOR THINGS", genres: "COMEDY, SCIFI", duration: "02:21", rating: "4.0/5" },
+    { id: 3, title: "THE IRON CLAW", genres: "DRAMA, SPORT", duration: "02:12", rating: "4.0/5" },
+    { id: 4, title: "PERFECT DAYS", genres: "DRAMA", duration: "02:04", rating: "4.5/5" },
+    { id: 5, title: "PAST LIVES", genres: "ROMANCE, DRAMA", duration: "01:45", rating: "5.0/5" },
 ];
 
 export const Receipt = React.forwardRef<HTMLDivElement, ReceiptProps>(({
@@ -29,7 +29,7 @@ export const Receipt = React.forwardRef<HTMLDivElement, ReceiptProps>(({
     ticketStyle = "Thermal Paper",
     codeStyle = "Barcode",
     showRatings = true,
-    showRuntimes = true,
+    showGenres = true,
 }, ref) => {
     const displayUser = username || "CINEPHILE";
     const dateStr = format(new Date(), "EEEE, MMMM d, yyyy");
@@ -73,10 +73,10 @@ export const Receipt = React.forwardRef<HTMLDivElement, ReceiptProps>(({
                     <div key={movie.id} className="flex flex-col text-xs uppercase leading-tight">
                         <div className="flex justify-between">
                             <span className="font-bold">0{index + 1} {movie.title}</span>
-                            {showRuntimes && <span>{movie.duration}</span>}
+                            <span>{movie.duration}</span>
                         </div>
                         <div className="flex justify-between text-[10px] text-black/80">
-                            <span>{movie.director}{showRatings ? ` · ${movie.rating}` : ""}</span>
+                            <span>{[showGenres && movie.genres, showRatings && movie.rating].filter(Boolean).join(" · ")}</span>
                         </div>
                     </div>
                 ))}

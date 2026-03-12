@@ -16,8 +16,8 @@ export interface SidebarProps {
     setCodeStyle: (val: string) => void;
     showRatings: boolean;
     setShowRatings: (val: boolean) => void;
-    showRuntimes: boolean;
-    setShowRuntimes: (val: boolean) => void;
+    showGenres: boolean;
+    setShowGenres: (val: boolean) => void;
     onGenerate: () => void;
 }
 
@@ -28,7 +28,7 @@ export function Sidebar({
     ticketStyle, setTicketStyle,
     codeStyle, setCodeStyle,
     showRatings, setShowRatings,
-    showRuntimes, setShowRuntimes,
+    showGenres, setShowGenres,
     onGenerate
 }: SidebarProps) {
     return (
@@ -75,9 +75,11 @@ export function Sidebar({
                 <div className="flex flex-col gap-1.5">
                     <label className="text-[9px] font-bold uppercase tracking-widest text-black">Ticket Style</label>
                     <Select value={ticketStyle} onChange={(e) => setTicketStyle(e.target.value)}>
-                        <option>Thermal Paper</option>
-                        <option>Matte Black</option>
-                        <option>Neon Pop</option>
+                        <option>Classic Thermal</option>
+                        <option>Midnight OLED</option>
+                        <option>Vintage Archive</option>
+                        <option>Eco-Kraft</option>
+                        <option>Premiere Gold</option>
                     </Select>
                 </div>
 
@@ -95,8 +97,8 @@ export function Sidebar({
                 </div>
 
                 <div className="flex items-center justify-between mb-2">
-                    <label className="text-[9px] font-bold uppercase tracking-widest text-black">Show Runtimes</label>
-                    <Switch checked={showRuntimes} onChange={setShowRuntimes} />
+                    <label className="text-[9px] font-bold uppercase tracking-widest text-black">Show Genres</label>
+                    <Switch checked={showGenres} onChange={setShowGenres} />
                 </div>
             </div>
 
