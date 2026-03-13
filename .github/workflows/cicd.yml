@@ -89,6 +89,17 @@ jobs:
           target: ${{ vars.SERVER_TARGET_DEVELOP }}
           strip_components: 1
 
+      - name: "[🐋] Restart Docker container"
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_KEY }}
+          port: ${{ secrets.SERVER_PORT }}
+          script: |
+            cd ${{ vars.SERVER_TARGET_DEVELOP }}/..
+            docker compose up -d
+
   deploy-production:
     needs: build
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -108,5 +119,16 @@ jobs:
           key: ${{ secrets.SERVER_KEY }}
           port: ${{ secrets.SERVER_PORT }}
           source: "out/*"
-          target: ${{ secrets.SERVER_TARGET }}
+          target: ${{ vars.SERVER_TARGET_PRODUCTION }}
           strip_components: 1
+
+      - name: "[🐋] Restart Docker container"
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_KEY }}
+          port: ${{ secrets.SERVER_PORT }}
+          script: |
+            cd ${{ vars.SERVER_TARGET_PRODUCTION }}/..
+            docker compose up -d
