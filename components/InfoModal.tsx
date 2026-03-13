@@ -41,9 +41,9 @@ export function InfoModal({ isOpen, onClose }: InfoModalProps) {
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 40, scale: 0.96 }}
                         transition={{ type: "spring", damping: 22, stiffness: 220 }}
-                        className="fixed inset-0 z-[101] flex items-center justify-center p-6 pointer-events-none"
+                        className="fixed inset-0 z-[101] flex items-center justify-center p-4 md:p-6 pointer-events-none"
                     >
-                        <div className="pointer-events-auto w-full max-w-md bg-[#fafaf8] border-2 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] rounded-none relative font-mono overflow-hidden">
+                        <div className="pointer-events-auto w-full max-w-[92vw] md:max-w-md max-h-[84dvh] md:max-h-none bg-[#fafaf8] border-2 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] rounded-none relative font-mono overflow-hidden">
 
                             {/* Receipt top edge */}
                             <div className="w-full h-4 overflow-hidden flex">
@@ -55,7 +55,7 @@ export function InfoModal({ isOpen, onClose }: InfoModalProps) {
                                 ))}
                             </div>
 
-                            <div className="px-7 pb-8 pt-2">
+                            <div className="px-5 pb-6 pt-2 md:px-7 md:pb-8 overflow-y-auto max-h-[calc(84dvh-1rem)] md:max-h-none">
                                 {/* Header */}
                                 <div className="flex items-start justify-between mb-6">
                                     <div>

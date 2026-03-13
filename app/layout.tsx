@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter, Oswald, VT323 } from "next/font/google";
 import "./globals.css";
 
@@ -21,6 +21,10 @@ const vt323 = VT323({
 export const metadata: Metadata = {
   title: "The Cinema Bill",
   description: "Minimalist utility for cinephiles. Converts your recent watches into a high-fidelity thermal receipt visualization.",
+};
+
+export const viewport: Viewport = {
+  themeColor: "#f5f0f0",
 };
 
 export default function RootLayout({
