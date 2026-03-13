@@ -73,9 +73,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: "[📁] Download build artifacts"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: build
+          path: out
 
       - name: "[🚀] Deploy via SCP"
         uses: appleboy/scp-action@master
@@ -94,7 +95,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: "[📁] Download build artifacts"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: build
           path: out
