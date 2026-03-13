@@ -86,7 +86,7 @@ jobs:
           key: ${{ secrets.SERVER_KEY }}
           port: ${{ secrets.SERVER_PORT }}
           source: "out/*"
-          target: ${{ secrets.SERVER_TARGET }}
+          target: ${{ vars.SERVER_TARGET_DEVELOP }}
           strip_components: 1
 
   deploy-production:
