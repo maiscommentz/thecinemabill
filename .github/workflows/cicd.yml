@@ -58,14 +58,23 @@ jobs:
       - name: "[📦] Install dependencies"
         run: npm ci
 
-      - name: "[🏗️] Build static website"
+      - name: "[🏗️] Build app"
         run: npm run build
+
+      - name: "[📁] Prepare deployment artifacts"
+        run: |
+          mkdir -p deploy/.next
+          cp -r .next/standalone deploy/.next/
+          cp -r .next/static deploy/.next/
+          cp -r public deploy/
+          cp Dockerfile deploy/
+          cp docker-compose.yml deploy/
 
       - name: "[📁] Upload build artifacts"
         uses: actions/upload-artifact@v6
         with:
-          name: build
-          path: out
+          name: build-package
+          path: deploy/
 
   deploy-develop:
     needs: build
@@ -75,8 +84,8 @@ jobs:
       - name: "[📁] Download build artifacts"
         uses: actions/download-artifact@v8
         with:
-          name: build
-          path: out
+          name: build-package
+          path: deploy
 
       - name: "[🚀] Deploy via SCP"
         uses: appleboy/scp-action@master
@@ -85,7 +94,7 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_KEY }}
           port: ${{ secrets.SERVER_PORT }}
-          source: "out/*"
+          source: "deploy/*"
           target: ${{ vars.SERVER_TARGET_DEVELOP }}
           strip_components: 1
 
@@ -97,7 +106,8 @@ jobs:
           key: ${{ secrets.SERVER_KEY }}
           port: ${{ secrets.SERVER_PORT }}
           script: |
-            cd ${{ vars.SERVER_TARGET_DEVELOP }}/..
+            cd ${{ vars.SERVER_TARGET_DEVELOP }}
+            docker compose build
             docker compose up -d
 
   deploy-production:
@@ -108,8 +118,8 @@ jobs:
       - name: "[📁] Download build artifacts"
         uses: actions/download-artifact@v8
         with:
-          name: build
-          path: out
+          name: build-package
+          path: deploy
 
       - name: "[🚀] Deploy via SCP"
         uses: appleboy/scp-action@master
@@ -118,7 +128,7 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_KEY }}
           port: ${{ secrets.SERVER_PORT }}
-          source: "out/*"
+          source: "deploy/*"
           target: ${{ vars.SERVER_TARGET_PRODUCTION }}
           strip_components: 1
 
@@ -130,5 +140,6 @@ jobs:
           key: ${{ secrets.SERVER_KEY }}
           port: ${{ secrets.SERVER_PORT }}
           script: |
-            cd ${{ vars.SERVER_TARGET_PRODUCTION }}/..
+            cd ${{ vars.SERVER_TARGET_PRODUCTION }}
+            docker compose build
             docker compose up -d
