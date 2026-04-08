@@ -39,10 +39,13 @@ export function Sidebar({
                 <p className="font-sans text-xs font-semibold text-gray-500">Your film history, itemized as a receipt.</p>
             </div>
 
-            <div className="flex flex-col gap-4 flex-1">
+            <div className="flex flex-col gap-4 flex-1 mb-4">
                 <div className="flex flex-col gap-1.5">
                     <label className="text-[9px] font-bold uppercase tracking-widest text-black">Letterboxd Username</label>
                     <Input
+                        id="username"
+                        name="username"
+                        autoComplete="off"
                         placeholder="e.g. regelegorila"
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
@@ -56,6 +59,9 @@ export function Sidebar({
                 <div className="flex flex-col gap-1.5">
                     <label className="text-[9px] font-bold uppercase tracking-widest text-black">Amount</label>
                     <Input
+                        id="amount"
+                        name="amount"
+                        autoComplete="off"
                         type="number"
                         min="1"
                         max="10"
@@ -89,7 +95,7 @@ export function Sidebar({
 
                 <div className="flex flex-col gap-1.5 mt-1 mb-2">
                     <label className="text-[9px] font-bold uppercase tracking-widest text-black">Item Subtitle</label>
-                    <Select value={itemSubtitle} onChange={(e) => setItemSubtitle(e.target.value)}>
+                    <Select id="itemSubtitle" name="itemSubtitle" autoComplete="off" value={itemSubtitle} onChange={(e) => setItemSubtitle(e.target.value)}>
                         <option>None</option>
                         <option>Year</option>
                         <option>Director</option>
@@ -99,7 +105,7 @@ export function Sidebar({
 
                 <div className="flex flex-col gap-1.5">
                     <label className="text-[9px] font-bold uppercase tracking-widest text-black">Ticket Style</label>
-                    <Select value={ticketStyle} onChange={(e) => setTicketStyle(e.target.value)}>
+                    <Select id="ticketStyle" name="ticketStyle" autoComplete="off" value={ticketStyle} onChange={(e) => setTicketStyle(e.target.value)}>
                         <option>Classic Thermal</option>
                         <option>Midnight OLED</option>
                         <option>Eco-Kraft</option>
@@ -109,7 +115,7 @@ export function Sidebar({
 
                 <div className="flex flex-col gap-1.5">
                     <label className="text-[9px] font-bold uppercase tracking-widest text-black">Code Style</label>
-                    <Select value={codeStyle} onChange={(e) => setCodeStyle(e.target.value)}>
+                    <Select id="codeStyle" name="codeStyle" autoComplete="off" value={codeStyle} onChange={(e) => setCodeStyle(e.target.value)}>
                         <option>Barcode</option>
                         <option>QR Code</option>
                     </Select>
