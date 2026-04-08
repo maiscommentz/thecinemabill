@@ -48,6 +48,16 @@ export const Receipt = React.forwardRef<HTMLDivElement, ReceiptProps>((
     const authCode = getAuthCode(displayUser);
     const styleConfig = getTicketStyleConfig(ticketStyle);
 
+    const numAmount = parseInt(amount) || 5;
+    const displayedFilms = films.slice(0, numAmount);
+    const totalMinutes = displayedFilms.reduce((acc, film) => {
+        const [h, m] = (film.duration || "00:00").split(":").map(Number);
+        return acc + (h * 60 + (m || 0));
+    }, 0);
+    const totalHours = Math.floor(totalMinutes / 60);
+    const remainingMinutes = totalMinutes % 60;
+    const totalRuntimeStr = `${String(totalHours).padStart(2, "0")}:${String(remainingMinutes).padStart(2, "0")}`;
+
     // Shareable URL for the QR / barcode
     const [currentUrl, setCurrentUrl] = React.useState("thecinemabill.maiscommentz.ch");
     const [pageUrl, setPageUrl] = React.useState("");
@@ -84,7 +94,7 @@ export const Receipt = React.forwardRef<HTMLDivElement, ReceiptProps>((
         }
     }, [pageUrl, ticketStyle]);
 
-    const numAmount = parseInt(amount) || 0;
+
 
     return (
         <div
@@ -126,7 +136,7 @@ export const Receipt = React.forwardRef<HTMLDivElement, ReceiptProps>((
             {/* Column headers */}
             <div className="w-full flex justify-between text-[13px] uppercase z-10" style={MONO}>
                 <div className="flex w-full">
-                    <span className="w-8 shrink-0 text-left">POS</span>
+                    <span className="w-8 shrink-0 text-left">QTY</span>
                     <span className="flex-1 text-left">ITEM</span>
                     <span className="shrink-0 text-right">RUNTIME</span>
                 </div>
@@ -167,8 +177,8 @@ export const Receipt = React.forwardRef<HTMLDivElement, ReceiptProps>((
                 <span>{Math.min(films.length, numAmount)}</span>
             </div>
             <div className="w-full flex justify-between text-[13px] uppercase z-10 mb-6" style={MONO}>
-                <span>TOTAL:</span>
-                <span>{films.length > 5 ? "12:45" : "05:12"}</span>
+                <span>TOTAL RUNTIME:</span>
+                <span>{totalRuntimeStr}</span>
             </div>
 
             {/* Payment info */}
