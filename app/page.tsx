@@ -31,7 +31,7 @@ export default function Home() {
 
   // Receipt options
   const [username, setUsername] = useState("");
-  const [sortBy, setSortBy] = useState("Newest");
+  const [sortBy, setSortBy] = useState("Highest Rated");
   const [amount, setAmount] = useState("5");
   const [ticketStyle, setTicketStyle] = useState("Classic Thermal");
   const [codeStyle, setCodeStyle] = useState("Barcode");
@@ -224,7 +224,6 @@ export default function Home() {
                 className="relative z-50 p-6 bg-[#ff4d4d] border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] max-w-sm"
               >
                 <div className="flex items-center gap-3 mb-3">
-                  <X className="w-8 h-8 p-1 border-2 border-black bg-white" />
                   <h3 className="font-logo text-xl font-black italic uppercase italic">ERROR</h3>
                 </div>
                 <p className="font-mono text-sm font-bold uppercase leading-tight bg-white p-3 border-2 border-black">

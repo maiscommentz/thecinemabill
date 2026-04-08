@@ -93,8 +93,6 @@ export function Sidebar({
                 <div className="flex flex-col gap-1.5">
                     <label className="text-[9px] font-bold uppercase tracking-widest text-black">Sort By</label>
                     <Select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
-                        <option>Newest</option>
-                        <option>Oldest</option>
                         <option>Highest Rated</option>
                         <option>Lowest Rated</option>
                     </Select>

@@ -77,7 +77,8 @@ export function InfoModal({ isOpen, onClose }: InfoModalProps) {
                                 <section className="mb-5">
                                     <p className="text-[11px] uppercase tracking-widest font-bold mb-2 opacity-50">ABOUT</p>
                                     <p className="text-[13px] leading-relaxed">
-                                        The Cinema Bill turns your Letterboxd watch history into a cinema receipt. Each film becomes a line item, itemized like a real ticket.<br />
+                                        The Cinema Bill turns your Letterboxd diary into a cinema receipt. Each film becomes a line item, itemized like a real ticket. <br />
+                                        Note that this utility uses Letterboxd&apos;s RSS feed, which means it is limited to sorting your most recent logs.
                                         If you like it, give it a star on GitHub!
                                     </p>
                                     <p className="text-[13px] leading-relaxed mt-2 flex items-center gap-1.5">

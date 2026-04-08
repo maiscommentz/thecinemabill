@@ -24,7 +24,7 @@ const parser = new Parser({
 export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const username = searchParams.get("username");
-    const sortBy = searchParams.get("sortBy") || "Newest";
+    const sortBy = searchParams.get("sortBy") || "Highest Rated";
 
     if (!username) {
         return NextResponse.json({ error: "Username is required" }, { status: 400 });
@@ -42,7 +42,7 @@ export async function GET(request: NextRequest) {
 
         if (response.status === 404) {
             return NextResponse.json(
-                { error: `User '@${username}' not found or profile is private` },
+                { error: `User '${username}' not found or profile is private` },
                 { status: 404 }
             );
         }
@@ -67,10 +67,8 @@ export async function GET(request: NextRequest) {
             const ratingA = parseFloat((a as unknown as LetterboxdItem).memberRating || "0");
             const ratingB = parseFloat((b as unknown as LetterboxdItem).memberRating || "0");
 
-            if (sortBy === "Oldest") return dateA - dateB;
-            if (sortBy === "Highest Rated") return ratingB - ratingA || dateB - dateA;
             if (sortBy === "Lowest Rated") return ratingA - ratingB || dateB - dateA;
-            return dateB - dateA; // Default: Newest
+            return ratingB - ratingA || dateB - dateA; // Default: Highest Rated
         });
 
         // Map to Movie interface

@@ -1,6 +1,6 @@
 // Allowed values for each option
 // Kept in sync with the Sidebar selects.
-export const SORTS = ["Newest", "Oldest", "Highest Rated", "Lowest Rated"] as const;
+export const SORTS = ["Highest Rated", "Lowest Rated"] as const;
 export const STYLES = ["Classic Thermal", "Midnight OLED", "Eco-Kraft", "Premiere VIP"] as const;
 export const CODE_STYLES = ["Barcode", "QR Code"] as const;
 
