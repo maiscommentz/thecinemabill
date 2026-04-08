@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, useCallback } from "react";
 import { Sidebar } from "@/components/Sidebar";
 import { Receipt } from "@/components/Receipt";
 import { SplashScreen } from "@/components/SplashScreen";
@@ -10,6 +10,10 @@ import { Download, Share2, Info, SlidersHorizontal, Check, X } from "lucide-reac
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { parseUrlParams } from "@/lib/parseUrlParams";
 import { downloadStory, shareStory } from "@/lib/downloadStory";
+import { Movie } from "@/lib/receiptData";
+
+// Stable random widths for the printing loader
+const PRINT_BARS = Array.from({ length: 12 }, () => `${Math.random() * 60 + 40}%`);
 
 export default function Home() {
   // UI state
@@ -20,10 +24,14 @@ export default function Home() {
   const [downloadState, setDownloadState] = useState<"idle" | "loading" | "done" | "error">("idle");
   const [shareState, setShareState] = useState<"idle" | "loading" | "shared" | "copied" | "error">("idle");
 
+  // Dynamic data state
+  const [movies, setMovies] = useState<Movie[]>([]);
+  const [fetchStatus, setFetchStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
   // Receipt options
   const [username, setUsername] = useState("");
-  const [listType, setListType] = useState("Recent Activity");
-  const [timePeriod, setTimePeriod] = useState("Last Month");
+  const [sortBy, setSortBy] = useState("Newest");
   const [amount, setAmount] = useState("5");
   const [ticketStyle, setTicketStyle] = useState("Classic Thermal");
   const [codeStyle, setCodeStyle] = useState("Barcode");
@@ -34,26 +42,80 @@ export default function Home() {
   const receiptRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
 
+  // State reset helper: hides receipt if any setting changes
+  const resetBill = useCallback(() => {
+    setHasGenerated(false);
+    setFetchStatus("idle");
+    setMovies([]);
+  }, []);
+
+  // Handlers
+  const handleGenerate = useCallback(async (arg?: string | React.MouseEvent | React.FormEvent) => {
+    // Ensure we don't use the 'event' object as a username if called from onClick
+    const overrideUsername = typeof arg === "string" ? arg : undefined;
+    const targetUser = overrideUsername || username;
+
+    if (!targetUser || typeof targetUser !== "string") {
+      setErrorMsg("Please enter a Letterboxd username");
+      setFetchStatus("error");
+      return;
+    }
+
+    setFetchStatus("loading");
+    setErrorMsg(null);
+    setHasGenerated(false);
+
+    try {
+      const params = new URLSearchParams({
+        username: targetUser,
+        sortBy
+      });
+      const resp = await fetch(`/api/fetch-bill?${params.toString()}`);
+
+      // Check if response is actually JSON before parsing
+      const contentType = resp.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        throw new Error("Server returned an invalid response (not JSON)");
+      }
+
+      const data = await resp.json();
+
+      if (!resp.ok) {
+        throw new Error(data.error || "Failed to fetch data");
+      }
+
+      setMovies(data);
+
+      // Artificial delay to show 'printing' animation
+      setTimeout(() => {
+        setFetchStatus("success");
+        setHasGenerated(true);
+        setSidebarOpen(false);
+      }, 1000);
+
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "An unknown error occurred";
+      setErrorMsg(message);
+      setFetchStatus("error");
+    }
+  }, [username, sortBy]);
+
   // Hydrate from validated URL params on mount
   useEffect(() => {
     const p = parseUrlParams(window.location.search);
     if (p.username) setUsername(p.username);
-    if (p.listType) setListType(p.listType);
-    if (p.timePeriod) setTimePeriod(p.timePeriod);
+    if (p.sortBy) setSortBy(p.sortBy);
     if (p.amount) setAmount(p.amount);
     if (p.ticketStyle) setTicketStyle(p.ticketStyle);
     if (p.codeStyle) setCodeStyle(p.codeStyle);
     if (p.showRatings !== undefined) setShowRatings(p.showRatings);
     if (p.showGenres !== undefined) setShowGenres(p.showGenres);
-    if (p.hasAnyParam) setHasGenerated(true);
-  }, []);
 
-  // Handlers
-  const handleGenerate = () => {
-    setHasGenerated(false);
-    setTimeout(() => setHasGenerated(true), 100);
-    setSidebarOpen(false);
-  };
+    // Auto-fetch if username is provided via URL
+    if (p.username) {
+      handleGenerate(p.username);
+    }
+  }, [handleGenerate]);
 
   const handleDownload = async () => {
     if (!receiptRef.current || downloadState === "loading") return;
@@ -97,14 +159,13 @@ export default function Home() {
     : numAmount <= 5 ? 1 : Math.max(0.4, 1 - (numAmount - 5) * 0.04);
 
   const sidebarProps = {
-    username, setUsername,
-    listType, setListType,
-    timePeriod, setTimePeriod,
-    amount, setAmount,
-    ticketStyle, setTicketStyle,
-    codeStyle, setCodeStyle,
-    showRatings, setShowRatings,
-    showGenres, setShowGenres,
+    username, setUsername: (v: string) => { setUsername(v); resetBill(); },
+    sortBy, setSortBy: (v: string) => { setSortBy(v); resetBill(); },
+    amount, setAmount: (v: string) => { setAmount(v); resetBill(); },
+    ticketStyle, setTicketStyle: (v: string) => { setTicketStyle(v); resetBill(); },
+    codeStyle, setCodeStyle: (v: string) => { setCodeStyle(v); resetBill(); },
+    showRatings, setShowRatings: (v: boolean) => { setShowRatings(v); resetBill(); },
+    showGenres, setShowGenres: (v: boolean) => { setShowGenres(v); resetBill(); },
     onGenerate: handleGenerate,
   };
 
@@ -149,14 +210,66 @@ export default function Home() {
 
           {/* Receipt area */}
           <div className="flex-1 relative flex items-start md:items-center justify-center overflow-y-auto md:overflow-hidden p-4 md:p-8">
-            {!hasGenerated && (
+            {fetchStatus === "idle" && !hasGenerated && (
               <div className="absolute inset-0 flex items-center justify-center text-gray-400 font-mono text-sm tracking-widest uppercase pointer-events-none">
                 Awaiting Generation...
               </div>
             )}
 
+            {/* ERROR ALERT (Neo-brutalist) */}
+            {fetchStatus === "error" && (
+              <motion.div
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                className="relative z-50 p-6 bg-[#ff4d4d] border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] max-w-sm"
+              >
+                <div className="flex items-center gap-3 mb-3">
+                  <X className="w-8 h-8 p-1 border-2 border-black bg-white" />
+                  <h3 className="font-logo text-xl font-black italic uppercase italic">ERROR</h3>
+                </div>
+                <p className="font-mono text-sm font-bold uppercase leading-tight bg-white p-3 border-2 border-black">
+                  {errorMsg || "Unknown Error occurred"}
+                </p>
+                <button
+                  onClick={() => setFetchStatus("idle")}
+                  className="mt-4 w-full p-2 bg-black text-white font-mono font-bold uppercase text-xs hover:bg-[#333] transition-colors"
+                >
+                  [ DISMISS ]
+                </button>
+              </motion.div>
+            )}
+
+            {/* PRINTING LOADER */}
+            {fetchStatus === "loading" && !hasGenerated && (
+              <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-30">
+                {/* Printer Slot */}
+                <div className="w-48 h-3 bg-black rounded-sm relative z-20" />
+                {/* Paper Strips */}
+                <motion.div
+                  initial={{ height: 0 }}
+                  animate={{ height: [0, 60, 58, 140, 138, 220, 218, 300] }}
+                  transition={{
+                    duration: 1.5,
+                    times: [0, 0.1, 0.15, 0.3, 0.35, 0.6, 0.65, 1],
+                    repeat: Infinity,
+                    ease: "easeInOut"
+                  }}
+                  className="w-44 bg-white border-x-2 border-black overflow-hidden relative z-10 origin-top shadow-[0_10px_20px_-10px_rgba(0,0,0,0.1)]"
+                >
+                  <div className="w-full h-full opacity-10 flex flex-col gap-2 p-2 pt-4">
+                    {PRINT_BARS.map((width, i) => (
+                      <div key={i} className="h-2 bg-black w-full" style={{ width }} />
+                    ))}
+                  </div>
+                </motion.div>
+                <p className="mt-8 font-mono text-xs font-bold uppercase tracking-[0.2em] animate-pulse">
+                  Printing Receipt...
+                </p>
+              </div>
+            )}
+
             <AnimatePresence>
-              {hasGenerated && (
+              {hasGenerated && fetchStatus === "success" && (
                 <motion.div
                   initial={{ y: "150%", opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
@@ -168,8 +281,8 @@ export default function Home() {
                   <Receipt
                     ref={receiptRef}
                     username={username}
-                    listType={listType}
-                    timePeriod={timePeriod}
+                    movies={movies}
+                    sortBy={sortBy}
                     amount={amount}
                     ticketStyle={ticketStyle}
                     codeStyle={codeStyle}

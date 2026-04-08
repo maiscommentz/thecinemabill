@@ -7,10 +7,8 @@ import { Input, Button, Select, Switch } from "./ui";
 export interface SidebarProps {
     username: string;
     setUsername: (val: string) => void;
-    listType: string;
-    setListType: (val: string) => void;
-    timePeriod: string;
-    setTimePeriod: (val: string) => void;
+    sortBy: string;
+    setSortBy: (val: string) => void;
     amount: string;
     setAmount: (val: string) => void;
     ticketStyle: string;
@@ -26,8 +24,7 @@ export interface SidebarProps {
 
 export function Sidebar({
     username, setUsername,
-    listType, setListType,
-    timePeriod, setTimePeriod,
+    sortBy, setSortBy,
     amount, setAmount,
     ticketStyle, setTicketStyle,
     codeStyle, setCodeStyle,
@@ -94,20 +91,12 @@ export function Sidebar({
                 </div>
 
                 <div className="flex flex-col gap-1.5">
-                    <label className="text-[9px] font-bold uppercase tracking-widest text-black">List Type</label>
-                    <Select value={listType} onChange={(e) => setListType(e.target.value)}>
-                        <option>Recent Activity</option>
-                        <option>My Favourites</option>
-                    </Select>
-                </div>
-
-                <div className="flex flex-col gap-1.5">
-                    <label className="text-[9px] font-bold uppercase tracking-widest text-black">Time Period</label>
-                    <Select value={timePeriod} onChange={(e) => setTimePeriod(e.target.value)}>
-                        <option>Last week</option>
-                        <option>Last Month</option>
-                        <option>Last Year</option>
-                        <option>All Time</option>
+                    <label className="text-[9px] font-bold uppercase tracking-widest text-black">Sort By</label>
+                    <Select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+                        <option>Newest</option>
+                        <option>Oldest</option>
+                        <option>Highest Rated</option>
+                        <option>Lowest Rated</option>
                     </Select>
                 </div>
 

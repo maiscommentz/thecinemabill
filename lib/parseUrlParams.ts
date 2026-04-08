@@ -1,19 +1,16 @@
 // Allowed values for each option
 // Kept in sync with the Sidebar selects.
-export const LIST_TYPES = ["Recent Activity", "My Favourites"] as const;
-export const TIME_PERIODS = ["Last week", "Last Month", "Last Year", "All Time"] as const;
+export const SORTS = ["Newest", "Oldest", "Highest Rated", "Lowest Rated"] as const;
 export const STYLES = ["Classic Thermal", "Midnight OLED", "Eco-Kraft", "Premiere VIP"] as const;
 export const CODE_STYLES = ["Barcode", "QR Code"] as const;
 
-export type ListType = typeof LIST_TYPES[number];
-export type TimePeriod = typeof TIME_PERIODS[number];
+export type SortType = typeof SORTS[number];
 export type TicketStyle = typeof STYLES[number];
 export type CodeStyle = typeof CODE_STYLES[number];
 
 export interface ParsedParams {
     username?: string;
-    listType?: ListType;
-    timePeriod?: TimePeriod;
+    sortBy?: SortType;
     amount?: string;
     ticketStyle?: TicketStyle;
     codeStyle?: CodeStyle;
@@ -36,15 +33,9 @@ export function parseUrlParams(search: string): ParsedParams {
         result.hasAnyParam = true;
     }
 
-    const list = params.get("list");
-    if (LIST_TYPES.includes(list as ListType)) {
-        result.listType = list as ListType;
-        result.hasAnyParam = true;
-    }
-
-    const period = params.get("period");
-    if (TIME_PERIODS.includes(period as TimePeriod)) {
-        result.timePeriod = period as TimePeriod;
+    const sort = params.get("sort");
+    if (SORTS.includes(sort as SortType)) {
+        result.sortBy = sort as SortType;
         result.hasAnyParam = true;
     }
 
