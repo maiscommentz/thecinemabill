@@ -1,4 +1,4 @@
-export interface Movie {
+export interface Film {
     id: number;
     title: string;
     genres: string;
@@ -7,7 +7,7 @@ export interface Movie {
 }
 
 /** Placeholder dataset used until the Letterboxd API is wired up. */
-export const mockMovies: Movie[] = [
+export const mockFilms: Film[] = [
     { id: 1, title: "ANATOMY OF A FALL", genres: "THRILLER, DRAMA", duration: "02:31", rating: "4.5/5.0" },
     { id: 2, title: "POOR THINGS", genres: "COMEDY, SCIFI", duration: "02:21", rating: "4.0/5.0" },
     { id: 3, title: "THE IRON CLAW", genres: "DRAMA, SPORT", duration: "02:12", rating: "4.0/5.0" },

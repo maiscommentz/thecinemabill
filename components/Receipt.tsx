@@ -7,11 +7,11 @@ import { QRCodeSVG } from "qrcode.react";
 import JsBarcode from "jsbarcode";
 import { getOrderNumber, getAuthCode, getTicketStyleConfig, getBarcodeFgColor } from "@/lib/receiptUtils";
 
-import { Movie } from "@/lib/receiptData";
+import { Film } from "@/lib/receiptData";
 
 export interface ReceiptProps {
     username?: string;
-    movies?: Movie[];
+    movies?: Film[];
     sortBy?: string;
     amount?: string;
     ticketStyle?: string;

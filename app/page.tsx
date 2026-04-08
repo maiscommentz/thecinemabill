@@ -10,7 +10,7 @@ import { Download, Share2, Info, SlidersHorizontal, Check, X } from "lucide-reac
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { parseUrlParams } from "@/lib/parseUrlParams";
 import { downloadStory, shareStory } from "@/lib/downloadStory";
-import { Movie } from "@/lib/receiptData";
+import { Film } from "@/lib/receiptData";
 
 // Stable random widths for the printing loader
 const PRINT_BARS = Array.from({ length: 12 }, () => `${Math.random() * 60 + 40}%`);
@@ -25,7 +25,7 @@ export default function Home() {
   const [shareState, setShareState] = useState<"idle" | "loading" | "shared" | "copied" | "error">("idle");
 
   // Dynamic data state
-  const [movies, setMovies] = useState<Movie[]>([]);
+  const [movies, setMovies] = useState<Film[]>([]);
   const [fetchStatus, setFetchStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
@@ -138,9 +138,14 @@ export default function Home() {
     if (!receiptRef.current || shareState === "loading") return;
     setShareState("loading");
     try {
+      const shareUrl = typeof window !== "undefined"
+        ? `${window.location.origin}/?user=${encodeURIComponent(username)}&sort=${encodeURIComponent(sortBy)}&amount=${amount}&ticket=${encodeURIComponent(ticketStyle)}&code=${encodeURIComponent(codeStyle)}&ratings=${showRatings}&genres=${showGenres}`
+        : "";
+
       const result = await shareStory(
         receiptRef.current,
-        `cinema-bill-${username || "cinephile"}-story.png`
+        `cinema-bill-${username || "cinephile"}-story.png`,
+        shareUrl
       );
       setShareState(result === "shared" ? "shared" : result === "copied" ? "copied" : "error");
     } catch (err) {

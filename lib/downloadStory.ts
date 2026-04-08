@@ -82,7 +82,8 @@ export async function downloadStory(receiptEl: HTMLElement, filename: string): P
  */
 export async function shareStory(
     receiptEl: HTMLElement,
-    filename: string
+    filename: string,
+    shareUrl: string
 ): Promise<"shared" | "copied" | "unsupported"> {
     const canvas = await buildStoryCanvas(receiptEl);
 
@@ -96,14 +97,14 @@ export async function shareStory(
         await navigator.share({
             files: [file],
             title: "The Cinema Bill",
-            text: "My movie receipt 🎬",
+            text: "Just got my film receipt from The Cinema Bill! 🍿 Check it out here : " + shareUrl,
         });
         return "shared";
     }
 
     // Fallback for unsupported devices or browsers
     try {
-        await navigator.clipboard.writeText(window.location.href);
+        await navigator.clipboard.writeText(shareUrl);
         return "copied";
     } catch {
         return "unsupported";

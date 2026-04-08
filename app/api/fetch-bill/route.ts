@@ -71,8 +71,8 @@ export async function GET(request: NextRequest) {
             return ratingB - ratingA || dateB - dateA; // Default: Highest Rated
         });
 
-        // Map to Movie interface
-        const movies = processedItems.slice(0, 10).map((item, index) => {
+        // Map to Film interface
+        const films = processedItems.slice(0, 10).map((item, index) => {
             const lbItem = item as unknown as LetterboxdItem;
             const ratingValue = lbItem.memberRating;
             const stars = ratingValue ? `${ratingValue}/5.0` : "UNRATED";
@@ -86,7 +86,7 @@ export async function GET(request: NextRequest) {
             };
         });
 
-        return NextResponse.json(movies);
+        return NextResponse.json(films);
 
     } catch (error) {
         console.error("Fetch bill error:", error);
