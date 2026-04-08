@@ -1,21 +1,20 @@
 // Allowed values for each option
 // Kept in sync with the Sidebar selects.
-export const SORTS = ["Highest Rated", "Lowest Rated"] as const;
 export const STYLES = ["Classic Thermal", "Midnight OLED", "Eco-Kraft", "Premiere VIP"] as const;
 export const CODE_STYLES = ["Barcode", "QR Code"] as const;
+export const ITEM_SUBTITLE_OPTIONS = ["None", "Year", "Director", "Genres"] as const;
 
-export type SortType = typeof SORTS[number];
 export type TicketStyle = typeof STYLES[number];
 export type CodeStyle = typeof CODE_STYLES[number];
+export type ItemSubtitleType = typeof ITEM_SUBTITLE_OPTIONS[number];
 
 export interface ParsedParams {
     username?: string;
-    sortBy?: SortType;
     amount?: string;
     ticketStyle?: TicketStyle;
     codeStyle?: CodeStyle;
     showRatings?: boolean;
-    showGenres?: boolean;
+    itemSubtitle?: ItemSubtitleType;
     hasAnyParam: boolean;
 }
 
@@ -30,12 +29,6 @@ export function parseUrlParams(search: string): ParsedParams {
     const user = params.get("user");
     if (user) {
         result.username = user.trim().slice(0, 50);
-        result.hasAnyParam = true;
-    }
-
-    const sort = params.get("sort");
-    if (SORTS.includes(sort as SortType)) {
-        result.sortBy = sort as SortType;
         result.hasAnyParam = true;
     }
 
@@ -66,9 +59,9 @@ export function parseUrlParams(search: string): ParsedParams {
         result.hasAnyParam = true;
     }
 
-    const genres = params.get("genres");
-    if (genres === "1" || genres === "0") {
-        result.showGenres = genres === "1";
+    const itemSubtitle = params.get("info");
+    if (ITEM_SUBTITLE_OPTIONS.includes(itemSubtitle as ItemSubtitleType)) {
+        result.itemSubtitle = itemSubtitle as ItemSubtitleType;
         result.hasAnyParam = true;
     }
 

@@ -24,7 +24,6 @@ const parser = new Parser({
 export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const username = searchParams.get("username");
-    const sortBy = searchParams.get("sortBy") || "Highest Rated";
 
     if (!username) {
         return NextResponse.json({ error: "Username is required" }, { status: 400 });
@@ -58,21 +57,7 @@ export async function GET(request: NextRequest) {
         const feed = await parser.parseString(xml);
 
         // Convert RSS items
-        let processedItems = [...feed.items];
-
-        // Sorting logic
-        processedItems = processedItems.sort((a, b) => {
-            const dateA = new Date(a.pubDate || 0).getTime();
-            const dateB = new Date(b.pubDate || 0).getTime();
-            const ratingA = parseFloat((a as unknown as LetterboxdItem).memberRating || "0");
-            const ratingB = parseFloat((b as unknown as LetterboxdItem).memberRating || "0");
-
-            if (sortBy === "Lowest Rated") return ratingA - ratingB || dateB - dateA;
-            return ratingB - ratingA || dateB - dateA; // Default: Highest Rated
-        });
-
-        // Map to Film interface
-        const films = processedItems.slice(0, 10).map((item, index) => {
+        const films = feed.items.map((item, index) => {
             const lbItem = item as unknown as LetterboxdItem;
             const ratingValue = lbItem.memberRating;
             const stars = ratingValue ? `${ratingValue}/5.0` : "UNRATED";
@@ -81,6 +66,8 @@ export async function GET(request: NextRequest) {
                 id: index + 1,
                 title: (lbItem.filmTitle || lbItem.title || "Unknown Title").toUpperCase(),
                 genres: "WATCHED",
+                director: "UNKNOWN DIR.",
+                year: lbItem.filmYear || "XXXX",
                 duration: "00:00",
                 rating: stars,
             };

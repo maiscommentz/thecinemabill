@@ -11,13 +11,12 @@ import { Film } from "@/lib/receiptData";
 
 export interface ReceiptProps {
     username?: string;
-    movies?: Film[];
-    sortBy?: string;
+    films?: Film[];
     amount?: string;
     ticketStyle?: string;
     codeStyle?: string;
     showRatings?: boolean;
-    showGenres?: boolean;
+    itemSubtitle?: string;
 }
 
 const MONO: React.CSSProperties = { fontFamily: '"Courier New", Courier, monospace' };
@@ -32,13 +31,12 @@ const Divider = () => (
 export const Receipt = React.forwardRef<HTMLDivElement, ReceiptProps>((
     {
         username,
-        movies = [],
-        sortBy = "Newest",
+        films = [],
         amount = "5",
         ticketStyle = "Classic Thermal",
         codeStyle = "Barcode",
         showRatings = true,
-        showGenres = true,
+        itemSubtitle = "None",
     },
     ref
 ) => {
@@ -46,8 +44,8 @@ export const Receipt = React.forwardRef<HTMLDivElement, ReceiptProps>((
     const displayUser = username || "CINEPHILE";
     const truncatedUser = displayUser.length > 16 ? displayUser.slice(0, 16) + "..." : displayUser;
     const dateStr = format(new Date(), "EEEE, MMMM d, yyyy");
-    const orderNumber = getOrderNumber(displayUser, sortBy);
-    const authCode = getAuthCode(displayUser, sortBy);
+    const orderNumber = getOrderNumber(displayUser);
+    const authCode = getAuthCode(displayUser);
     const styleConfig = getTicketStyleConfig(ticketStyle);
 
     // Shareable URL for the QR / barcode
@@ -58,15 +56,14 @@ export const Receipt = React.forwardRef<HTMLDivElement, ReceiptProps>((
         setCurrentUrl(window.location.host);
         const params = new URLSearchParams({
             ...(username ? { user: username } : {}),
-            sort: sortBy,
             amount,
             style: ticketStyle,
             code: codeStyle,
             ratings: showRatings ? "1" : "0",
-            genres: showGenres ? "1" : "0",
+            info: itemSubtitle,
         });
         setPageUrl(`${window.location.origin}/?${params.toString()}`);
-    }, [username, sortBy, amount, ticketStyle, codeStyle, showRatings, showGenres]);
+    }, [username, amount, ticketStyle, codeStyle, showRatings, itemSubtitle]);
 
     // Render barcode via JsBarcode
     const barcodeRef = React.useRef<SVGSVGElement>(null);
@@ -115,7 +112,7 @@ export const Receipt = React.forwardRef<HTMLDivElement, ReceiptProps>((
                 <h1 className="font-logo text-[2.2rem] font-black italic uppercase leading-none tracking-tight mb-2 text-left">
                     THE —<br />CINEMA BILL
                 </h1>
-                <p className="text-xs font-sans uppercase opacity-80" style={MONO}>{sortBy} MOVIES</p>
+                <p className="text-xs font-sans uppercase opacity-80" style={MONO}>LAST FILMS WATCHED</p>
             </div>
 
             {/* Order info */}
@@ -137,24 +134,26 @@ export const Receipt = React.forwardRef<HTMLDivElement, ReceiptProps>((
 
             <Divider />
 
-            {/* Movie rows */}
+            {/* Film rows */}
             <div className="w-full flex flex-col z-10 text-[13px] mt-1 mb-1" style={MONO}>
-                {movies.slice(0, numAmount).map((movie, index) => {
+                {films.slice(0, numAmount).map((film, index) => {
                     const subtitle = [
-                        showGenres && movie.genres,
-                        showRatings && movie.rating,
+                        itemSubtitle === "Year" && film.year,
+                        itemSubtitle === "Director" && film.director,
+                        itemSubtitle === "Genres" && film.genres,
+                        showRatings && film.rating,
                     ].filter(Boolean).join(" - ");
 
                     return (
-                        <div key={`${movie.id}-${index}`} className="flex w-full mb-3 uppercase leading-tight items-start">
+                        <div key={`${film.id}-${index}`} className="flex w-full mb-3 uppercase leading-tight items-start">
                             <div className="w-8 shrink-0 text-left">
                                 {String(index + 1).padStart(2, "0")}
                             </div>
                             <div className="flex-1 pr-3 flex flex-col text-left">
-                                <span className="break-words">{movie.title}</span>
+                                <span className="break-words">{film.title}</span>
                                 {subtitle}
                             </div>
-                            <div className="shrink-0 text-right">{movie.duration}</div>
+                            <div className="shrink-0 text-right">{film.duration}</div>
                         </div>
                     );
                 })}
@@ -165,11 +164,11 @@ export const Receipt = React.forwardRef<HTMLDivElement, ReceiptProps>((
             {/* Totals */}
             <div className="w-full flex justify-between text-[13px] uppercase z-10 mt-1 mb-1" style={MONO}>
                 <span>ITEM COUNT:</span>
-                <span>{Math.min(movies.length, numAmount)}</span>
+                <span>{Math.min(films.length, numAmount)}</span>
             </div>
             <div className="w-full flex justify-between text-[13px] uppercase z-10 mb-6" style={MONO}>
                 <span>TOTAL:</span>
-                <span>{movies.length > 5 ? "12:45" : "05:12"}</span>
+                <span>{films.length > 5 ? "12:45" : "05:12"}</span>
             </div>
 
             {/* Payment info */}

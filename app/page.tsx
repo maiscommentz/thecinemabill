@@ -25,18 +25,17 @@ export default function Home() {
   const [shareState, setShareState] = useState<"idle" | "loading" | "shared" | "copied" | "error">("idle");
 
   // Dynamic data state
-  const [movies, setMovies] = useState<Film[]>([]);
+  const [films, setFilms] = useState<Film[]>([]);
   const [fetchStatus, setFetchStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   // Receipt options
   const [username, setUsername] = useState("");
-  const [sortBy, setSortBy] = useState("Highest Rated");
   const [amount, setAmount] = useState("5");
   const [ticketStyle, setTicketStyle] = useState("Classic Thermal");
   const [codeStyle, setCodeStyle] = useState("Barcode");
   const [showRatings, setShowRatings] = useState(true);
-  const [showGenres, setShowGenres] = useState(true);
+  const [itemSubtitle, setItemSubtitle] = useState("None");
 
   // Refs & hooks
   const receiptRef = useRef<HTMLDivElement>(null);
@@ -46,7 +45,7 @@ export default function Home() {
   const resetBill = useCallback(() => {
     setHasGenerated(false);
     setFetchStatus("idle");
-    setMovies([]);
+    setFilms([]);
   }, []);
 
   // Handlers
@@ -68,7 +67,6 @@ export default function Home() {
     try {
       const params = new URLSearchParams({
         username: targetUser,
-        sortBy
       });
       const resp = await fetch(`/api/fetch-bill?${params.toString()}`);
 
@@ -84,7 +82,7 @@ export default function Home() {
         throw new Error(data.error || "Failed to fetch data");
       }
 
-      setMovies(data);
+      setFilms(data);
 
       // Artificial delay to show 'printing' animation
       setTimeout(() => {
@@ -98,18 +96,17 @@ export default function Home() {
       setErrorMsg(message);
       setFetchStatus("error");
     }
-  }, [username, sortBy]);
+  }, [username]);
 
   // Hydrate from validated URL params on mount
   useEffect(() => {
     const p = parseUrlParams(window.location.search);
     if (p.username) setUsername(p.username);
-    if (p.sortBy) setSortBy(p.sortBy);
     if (p.amount) setAmount(p.amount);
     if (p.ticketStyle) setTicketStyle(p.ticketStyle);
     if (p.codeStyle) setCodeStyle(p.codeStyle);
     if (p.showRatings !== undefined) setShowRatings(p.showRatings);
-    if (p.showGenres !== undefined) setShowGenres(p.showGenres);
+    if (p.itemSubtitle !== undefined) setItemSubtitle(p.itemSubtitle);
 
     // Auto-fetch if username is provided via URL
     if (p.username) {
@@ -139,7 +136,7 @@ export default function Home() {
     setShareState("loading");
     try {
       const shareUrl = typeof window !== "undefined"
-        ? `${window.location.origin}/?user=${encodeURIComponent(username)}&sort=${encodeURIComponent(sortBy)}&amount=${amount}&ticket=${encodeURIComponent(ticketStyle)}&code=${encodeURIComponent(codeStyle)}&ratings=${showRatings}&genres=${showGenres}`
+        ? `${window.location.origin}/?user=${encodeURIComponent(username)}&amount=${amount}&ticket=${encodeURIComponent(ticketStyle)}&code=${encodeURIComponent(codeStyle)}&ratings=${showRatings}&info=${encodeURIComponent(itemSubtitle)}`
         : "";
 
       const result = await shareStory(
@@ -165,12 +162,11 @@ export default function Home() {
 
   const sidebarProps = {
     username, setUsername: (v: string) => { setUsername(v); resetBill(); },
-    sortBy, setSortBy: (v: string) => { setSortBy(v); resetBill(); },
     amount, setAmount: (v: string) => { setAmount(v); resetBill(); },
     ticketStyle, setTicketStyle: (v: string) => { setTicketStyle(v); resetBill(); },
     codeStyle, setCodeStyle: (v: string) => { setCodeStyle(v); resetBill(); },
     showRatings, setShowRatings: (v: boolean) => { setShowRatings(v); resetBill(); },
-    showGenres, setShowGenres: (v: boolean) => { setShowGenres(v); resetBill(); },
+    itemSubtitle, setItemSubtitle: (v: string) => { setItemSubtitle(v); resetBill(); },
     onGenerate: handleGenerate,
   };
 
@@ -285,13 +281,12 @@ export default function Home() {
                   <Receipt
                     ref={receiptRef}
                     username={username}
-                    movies={movies}
-                    sortBy={sortBy}
+                    films={films}
                     amount={amount}
                     ticketStyle={ticketStyle}
                     codeStyle={codeStyle}
                     showRatings={showRatings}
-                    showGenres={showGenres}
+                    itemSubtitle={itemSubtitle}
                   />
                 </motion.div>
               )}

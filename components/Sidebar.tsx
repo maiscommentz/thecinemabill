@@ -7,8 +7,6 @@ import { Input, Button, Select, Switch } from "./ui";
 export interface SidebarProps {
     username: string;
     setUsername: (val: string) => void;
-    sortBy: string;
-    setSortBy: (val: string) => void;
     amount: string;
     setAmount: (val: string) => void;
     ticketStyle: string;
@@ -17,19 +15,18 @@ export interface SidebarProps {
     setCodeStyle: (val: string) => void;
     showRatings: boolean;
     setShowRatings: (val: boolean) => void;
-    showGenres: boolean;
-    setShowGenres: (val: boolean) => void;
+    itemSubtitle: string;
+    setItemSubtitle: (val: string) => void;
     onGenerate: () => void;
 }
 
 export function Sidebar({
     username, setUsername,
-    sortBy, setSortBy,
     amount, setAmount,
     ticketStyle, setTicketStyle,
     codeStyle, setCodeStyle,
     showRatings, setShowRatings,
-    showGenres, setShowGenres,
+    itemSubtitle, setItemSubtitle,
     onGenerate,
 }: SidebarProps) {
     return (
@@ -46,7 +43,7 @@ export function Sidebar({
                 <div className="flex flex-col gap-1.5">
                     <label className="text-[9px] font-bold uppercase tracking-widest text-black">Letterboxd Username</label>
                     <Input
-                        placeholder="e.g. film_lover12"
+                        placeholder="e.g. regelegorila"
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
                     />
@@ -90,11 +87,13 @@ export function Sidebar({
                     />
                 </div>
 
-                <div className="flex flex-col gap-1.5">
-                    <label className="text-[9px] font-bold uppercase tracking-widest text-black">Sort By</label>
-                    <Select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
-                        <option>Highest Rated</option>
-                        <option>Lowest Rated</option>
+                <div className="flex flex-col gap-1.5 mt-1 mb-2">
+                    <label className="text-[9px] font-bold uppercase tracking-widest text-black">Item Subtitle</label>
+                    <Select value={itemSubtitle} onChange={(e) => setItemSubtitle(e.target.value)}>
+                        <option>None</option>
+                        <option>Year</option>
+                        <option>Director</option>
+                        <option>Genres</option>
                     </Select>
                 </div>
 
@@ -119,11 +118,6 @@ export function Sidebar({
                 <div className="flex items-center justify-between mt-1">
                     <label className="text-[9px] font-bold uppercase tracking-widest text-black">Show Ratings</label>
                     <Switch checked={showRatings} onChange={setShowRatings} />
-                </div>
-
-                <div className="flex items-center justify-between mb-2">
-                    <label className="text-[9px] font-bold uppercase tracking-widest text-black">Show Genres</label>
-                    <Switch checked={showGenres} onChange={setShowGenres} />
                 </div>
             </div>
 

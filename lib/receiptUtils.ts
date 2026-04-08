@@ -22,14 +22,14 @@ export function deriveCode(seed: string): string {
     return String(1000 + (Math.abs(h) % 9000));
 }
 
-/** Returns the 4-digit order number for a given user/sort combo. */
-export function getOrderNumber(displayUser: string, sortBy: string): string {
-    return deriveCode(`${displayUser}|${sortBy}`);
+/** Returns the 4-digit order number for a given user. */
+export function getOrderNumber(displayUser: string): string {
+    return deriveCode(`${displayUser}|order`);
 }
 
-/** Returns the 6-character auth code (different seed from order number). */
-export function getAuthCode(displayUser: string, sortBy: string): string {
-    return deriveCode(`${sortBy}|${displayUser}|auth`).padEnd(6, "0").slice(0, 6);
+/** Returns the 6-character auth code. */
+export function getAuthCode(displayUser: string): string {
+    return deriveCode(`${displayUser}|auth`).padEnd(6, "0").slice(0, 6);
 }
 
 /** Maps a ticket style name to its visual configuration. */
