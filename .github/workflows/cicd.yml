@@ -59,6 +59,8 @@ jobs:
         run: npm ci
 
       - name: "[🏗️] Build app"
+        env:
+          TMDB_TOKEN: ${{ secrets.TMDB_TOKEN }}
         run: npm run build
 
       - name: "[📁] Prepare deployment artifacts"
@@ -69,12 +71,13 @@ jobs:
           cp -r public deploy/
           cp Dockerfile deploy/
           cp docker-compose.yml deploy/
+          cd deploy && tar -czf ../release.tar.gz .
 
       - name: "[📁] Upload build artifacts"
         uses: actions/upload-artifact@v6
         with:
           name: build-package
-          path: deploy/
+          path: release.tar.gz
 
   deploy-develop:
     needs: build
@@ -85,7 +88,7 @@ jobs:
         uses: actions/download-artifact@v8
         with:
           name: build-package
-          path: deploy
+          path: .
 
       - name: "[🚀] Deploy via SCP"
         uses: appleboy/scp-action@master
@@ -94,9 +97,8 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_KEY }}
           port: ${{ secrets.SERVER_PORT }}
-          source: "deploy/*"
+          source: "release.tar.gz"
           target: ${{ vars.SERVER_TARGET_DEVELOP }}
-          strip_components: 1
 
       - name: "[🐋] Restart Docker container"
         uses: appleboy/ssh-action@master
@@ -107,6 +109,10 @@ jobs:
           port: ${{ secrets.SERVER_PORT }}
           script: |
             cd ${{ vars.SERVER_TARGET_DEVELOP }}
+            tar -xzf release.tar.gz
+            rm release.tar.gz
+            echo "TMDB_TOKEN=${{ secrets.TMDB_TOKEN }}" > .env
+            docker compose down || true
             docker compose build
             docker compose up -d
 
@@ -119,7 +125,7 @@ jobs:
         uses: actions/download-artifact@v8
         with:
           name: build-package
-          path: deploy
+          path: .
 
       - name: "[🚀] Deploy via SCP"
         uses: appleboy/scp-action@master
@@ -128,9 +134,8 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_KEY }}
           port: ${{ secrets.SERVER_PORT }}
-          source: "deploy/*"
+          source: "release.tar.gz"
           target: ${{ vars.SERVER_TARGET_PRODUCTION }}
-          strip_components: 1
 
       - name: "[🐋] Restart Docker container"
         uses: appleboy/ssh-action@master
@@ -141,5 +146,9 @@ jobs:
           port: ${{ secrets.SERVER_PORT }}
           script: |
             cd ${{ vars.SERVER_TARGET_PRODUCTION }}
+            tar -xzf release.tar.gz
+            rm release.tar.gz
+            echo "TMDB_TOKEN=${{ secrets.TMDB_TOKEN }}" > .env
+            docker compose down || true
             docker compose build
             docker compose up -d
