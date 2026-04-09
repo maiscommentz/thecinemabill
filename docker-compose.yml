@@ -1,0 +1,14 @@
+services:
+  thecinemabill:
+    build: .
+    restart: always
+    environment:
+      - NODE_ENV=production
+      - HOSTNAME=0.0.0.0
+      - TMDB_TOKEN=${TMDB_TOKEN}
+    networks:
+      - nginx-proxy-manager_default
+
+networks:
+  nginx-proxy-manager_default:
+    external: true

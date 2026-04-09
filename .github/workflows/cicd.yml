@@ -1,0 +1,154 @@
+name: CI/CD
+
+on:
+  push:
+    branches:
+      - develop
+      - main
+  pull_request:
+    branches:
+      - develop
+      - main
+
+permissions:
+  contents: read
+  packages: write
+  id-token: write
+
+concurrency:
+  group: ci-cd-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - name: "[⚙️] Checkout repository"
+        uses: actions/checkout@v5
+
+      - name: "[🔧] Setup Node.js"
+        uses: actions/setup-node@v5
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: "[📦] Install dependencies"
+        run: npm ci
+
+      - name: "[🧹] Run ESLint"
+        run: npm run lint
+
+      - name: "[🧪] Run type check"
+        run: npx tsc --noEmit
+
+  build:
+    needs: [lint]
+    runs-on: ubuntu-latest
+    steps:
+      - name: "[⚙️] Checkout repository"
+        uses: actions/checkout@v5
+
+      - name: "[📦] Setup Node.js"
+        uses: actions/setup-node@v5
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: "[📦] Install dependencies"
+        run: npm ci
+
+      - name: "[🏗️] Build app"
+        env:
+          TMDB_TOKEN: ${{ secrets.TMDB_TOKEN }}
+        run: npm run build
+
+      - name: "[📁] Prepare deployment artifacts"
+        run: |
+          mkdir -p deploy/.next
+          cp -r .next/standalone deploy/.next/
+          cp -r .next/static deploy/.next/
+          cp -r public deploy/
+          cp Dockerfile deploy/
+          cp docker-compose.yml deploy/
+          cd deploy && tar -czf ../release.tar.gz .
+
+      - name: "[📁] Upload build artifacts"
+        uses: actions/upload-artifact@v6
+        with:
+          name: build-package
+          path: release.tar.gz
+
+  deploy-develop:
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
+    runs-on: ubuntu-latest
+    steps:
+      - name: "[📁] Download build artifacts"
+        uses: actions/download-artifact@v8
+        with:
+          name: build-package
+          path: .
+
+      - name: "[🚀] Deploy via SCP"
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_KEY }}
+          port: ${{ secrets.SERVER_PORT }}
+          source: "release.tar.gz"
+          target: ${{ vars.SERVER_TARGET_DEVELOP }}
+
+      - name: "[🐋] Restart Docker container"
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_KEY }}
+          port: ${{ secrets.SERVER_PORT }}
+          script: |
+            cd ${{ vars.SERVER_TARGET_DEVELOP }}
+            tar -xzf release.tar.gz
+            rm release.tar.gz
+            echo "TMDB_TOKEN=${{ secrets.TMDB_TOKEN }}" > .env
+            docker compose down || true
+            docker compose build
+            docker compose up -d
+
+  deploy-production:
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: "[📁] Download build artifacts"
+        uses: actions/download-artifact@v8
+        with:
+          name: build-package
+          path: .
+
+      - name: "[🚀] Deploy via SCP"
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_KEY }}
+          port: ${{ secrets.SERVER_PORT }}
+          source: "release.tar.gz"
+          target: ${{ vars.SERVER_TARGET_PRODUCTION }}
+
+      - name: "[🐋] Restart Docker container"
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_KEY }}
+          port: ${{ secrets.SERVER_PORT }}
+          script: |
+            cd ${{ vars.SERVER_TARGET_PRODUCTION }}
+            tar -xzf release.tar.gz
+            rm release.tar.gz
+            echo "TMDB_TOKEN=${{ secrets.TMDB_TOKEN }}" > .env
+            docker compose down || true
+            docker compose build
+            docker compose up -d
